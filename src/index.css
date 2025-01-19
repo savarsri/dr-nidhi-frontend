@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #FDF5F5;
+}
+
+h3{
+  margin: 1rem 0 0 0;
+font-weight: bold;
+font-size: x-large;
+}
+
+li{
+  margin-left: 2rem;
+}
