@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { OtpInput } from "./OtpInput";
 import { useTreatment } from "../context/TreatmentContext";
+import Cookies from "js-cookie";
 
 export const LoginPage = ({ onLogin }) => {
 
@@ -26,6 +27,7 @@ export const LoginPage = ({ onLogin }) => {
   const handleSubmitOtp = (e) => {
     e.preventDefault();
     if (otp.join("") === "123456") {
+      Cookies.set("login", true);
       onLogin();
     } else {
       setError("Invalid OTP. For demo, use 123456");

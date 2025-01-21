@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SplashScreen } from "./components/SplashScreen";
 import { LoginPage } from "./components/LoginPage";
@@ -6,12 +6,21 @@ import { Dashboard } from "./components/Dashboard";
 import { PatientEntry } from "./components/PatientEntry";
 import { PatientList } from "./components/PatientList";
 import StatusPage from "./components/StatusPage";
+import Cookies from "js-cookie";
+import { TreatmentProvider } from "./context/TreatmentContext"
 
-import {TreatmentProvider} from "./context/TreatmentContext"
+const status = Cookies.get('login')
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (status) {
+      setIsAuthenticated(true)
+      setShowSplash(false)
+    }
+  }, [status])
 
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
@@ -25,29 +34,33 @@ function App() {
             path="/"
             element={
               isAuthenticated ? (
-                <Dashboard onLogout={() => setIsAuthenticated(false)} />
+                <Dashboard onLogout={() => {
+                  setIsAuthenticated(false)
+                  Cookies.remove('login')
+                  return;
+                 }} />
               ) : (
                 <LoginPage onLogin={() => setIsAuthenticated(true)} />
               )
             }
-            // element={
-            //   isAuthenticated ? (
-            //     <Dashboard onLogout={() => setIsAuthenticated(false)} />
-            //   ) : (
-            //     <LoginPage onLogin={() => setIsAuthenticated(true)} />
-            //   )
-            // }
+          // element={
+          //   isAuthenticated ? (
+          //     <Dashboard onLogout={() => setIsAuthenticated(false)} />
+          //   ) : (
+          //     <LoginPage onLogin={() => setIsAuthenticated(true)} />
+          //   )
+          // }
           />
           <Route
             path="/patient/new"
             element={isAuthenticated ? <PatientEntry /> : <Navigate to="/" />}
-            // element={<PatientEntry />}
+          // element={<PatientEntry />}
           />
           <Route
             path="/patients"
             element={isAuthenticated ? <PatientList /> : <Navigate to="/" />}
           />
-          <Route  
+          <Route
             path="/status/:id"
             // element={<StatusPage />}
             element={isAuthenticated ? <StatusPage /> : <Navigate to="/" />}
