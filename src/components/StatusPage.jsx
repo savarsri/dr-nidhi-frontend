@@ -140,12 +140,12 @@ const StatusPage = () => {
                 range: "<9 ppm"
               }, {
                 parameter: "O2 (Oxygen Level)",
-                value: data.sensor_data.o2 || "80 mmHg",
-                range: "75-100 mmHg"
+                value: data.sensor_data.o2 || "80 %Vol",
+                range: "75-100 %Vol"
               }, {
                 parameter: "CO2 (Carbon Dioxide)",
-                value: data.sensor_data.co2 || "55 mmHg",
-                range: "35-45 mmHg"
+                value: data.sensor_data.co2 || "30,000 ppm",
+                range: "20,000-30,000 ppm"
               }, {
                 parameter: "SpO2",
                 value: data.sensor_data.spo2 || "88%",
@@ -171,7 +171,7 @@ const StatusPage = () => {
 
       {/* Doctor's Remark Section */}
       <div className="mb-5">
-        <h4 className="font-bold mb-2">Doctor's Remark</h4>
+        <h4 className="font-bold mb-2">Doctor's Remark [Please share your view about the above Diagnosis and Recommendation]</h4>
         <div className="flex gap-3 mb-3 justify-center">
           {[
             { label: "Excellent", emoji: "😊" },
@@ -195,7 +195,7 @@ const StatusPage = () => {
       </div>
 
       <div className="mb-5">
-        <h4 className="font-bold mb-2">Doctor's Note</h4>
+        <h4 className="font-bold mb-2">Doctor's note [Please share your own Patient's Diagnosis and Line of Treatment</h4>
         <textarea
           className="w-full h-12 border border-[#854141] rounded p-2 shadow-inner focus:outline-none focus:ring-2 focus:ring-[#854141]"
           placeholder="Leave a comment..."

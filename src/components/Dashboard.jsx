@@ -6,14 +6,20 @@ import api from "../api.js"
 export const Dashboard = ({ onLogout }) => {
 
   const [patients, setPatients] = useState([])
+  const [totalPatients, setTotalPatients] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const fetchData = async () => {
+    setLoading(true)
     try {
       const response = await api.get('/patient')
       if (response.status === 200) {
         const mappedData = response.data.map((item) => {
-          const [date, time] = item.created_at.split("T");
-          const formattedTime = time.split(":").slice(0, 2).join(":");
+          const utcDate = new Date(item.created_at);
+          const istDate = new Date(utcDate.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+
+          const date = istDate.toISOString().split("T")[0];
+          const formattedTime = istDate.toTimeString().split(":").slice(0, 2).join(":");
 
           return {
             ...item,
@@ -21,11 +27,20 @@ export const Dashboard = ({ onLogout }) => {
             time: formattedTime,
           };
         });
-        setPatients(mappedData)
+        mappedData.sort((a, b) => {
+          const dateTimeA = new Date(`${a.date}T${a.time}:00`);
+          const dateTimeB = new Date(`${b.date}T${b.time}:00`);
+          return dateTimeB - dateTimeA;
+        });
+
+        setPatients(mappedData);
+        setTotalPatients(mappedData.length)
         console.log(mappedData);
       }
     } catch (error) {
       console.log(error)
+    } finally {
+      setLoading(false)
     }
 
   }
@@ -33,20 +48,20 @@ export const Dashboard = ({ onLogout }) => {
   useEffect(() => {
     fetchData()
   }, [])
+
   const stats = [
-    { label: 'Total Patients', value: '1,234', icon: Users },
-    { label: 'New This Month', value: '56', icon: UserPlus },
+    { label: 'Total Patients', value: totalPatients, icon: Users },
+    { label: 'New This Month', value: totalPatients, icon: UserPlus },
   ];
 
-  // const patients = [
-  //   { id: 1, name: 'New ID', phone: '123-456-7890', date:'11/06/2025', time:'13:45' },
-  //   { id: 2, name: 'Jane Smith', age: 32, gender: 'Female', phone: '098-765-4321', date:'11/06/2025', time:'11:25'  },
-  //   { id: 2, name: 'Jane Smith', age: 32, gender: 'Female', phone: '098-765-4321', date:'11/06/2025', time:'11:25'  },
-  //   { id: 2, name: 'Jane Smith', age: 32, gender: 'Female', phone: '098-765-4321', date:'11/06/2025', time:'11:25'  },
-  //   { id: 2, name: 'Jane Smith', age: 32, gender: 'Female', phone: '098-765-4321', date:'11/06/2025', time:'11:25'  },
-  //   { id: 2, name: 'Jane Smith', age: 32, gender: 'Female', phone: '098-765-4321', date:'11/06/2025', time:'11:25' },
-  //   // Add more mock data as needed
-  // ];
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="w-6 h-6 border-4 border-t-4 border-gray-300 border-solid rounded-full animate-spin border-t-blue-500"></div>
+        <span className="ml-3 text-xl text-gray-700">Loading...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -104,58 +119,6 @@ export const Dashboard = ({ onLogout }) => {
           </div>
         ))}
       </div>
-      {/* <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 mb-8">
-          {stats.map((stat) => (
-            <div key={stat.label} className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <stat.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-accent truncate">{stat.label}</dt>
-                      <dd className="text-2xl font-semibold text-text">{stat.value}</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div> */}
-
-      {/* <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2">
-          <Link to="/patient/new" className="block p-6 bg-white shadow rounded-lg hover:shadow-md transition-shadow">
-            <div className="flex items-center">
-              <UserPlus className="h-8 w-8 text-primary" />
-              <div className="ml-4">
-                <h3 className="text-lg font-medium text-text">New Patient Entry</h3>
-                <p className="text-accent">Register a new patient</p>
-              </div>
-            </div>
-          </Link>
-          <Link to="/patients" className="block p-6 bg-white shadow rounded-lg hover:shadow-md transition-shadow">
-            <div className="flex items-center">
-              <Users className="h-8 w-8 text-primary" />
-              <div className="ml-4">
-                <h3 className="text-lg font-medium text-text">Patient Details</h3>
-                <p className="text-accent">View and manage patients</p>
-              </div>
-            </div>
-          </Link>
-          <Link to="/status" className="block p-6 bg-white shadow rounded-lg hover:shadow-md transition-shadow">
-            <div className="flex items-center">
-              <span className="text-lg font-medium text-text">View Status Page</span>
-            </div>
-          </Link>
-          <Link to="/patients" className="block p-6 bg-white shadow rounded-lg hover:shadow-md transition-shadow">
-            <div className="flex items-center">
-              <span className="text-lg font-medium text-text">Patient List</span>
-            </div>
-          </Link>
-        </div>
-      </main> */}
       <div
         className="shadow overflow-hidden sm:rounded-lg"
         style={{ background: '#FFFFFF', border: '1px solid #FAE8E8' }}
@@ -225,23 +188,6 @@ export const Dashboard = ({ onLogout }) => {
                           {patient.patient_name || "New Patient"}
                         </Link>
                     }
-                    {/* {patient.id === 1 ? (
-                <Link
-                  to="/patient/new"
-                  className="text-red-600 hover:text-red-800"
-                >
-                  {patient.name}
-                </Link>
-              ) : patient.name === 'Jane Smith' ? (
-                <Link
-                  to="/status"
-                  className="text-red-600 hover:text-red-800"
-                >
-                  {patient.name}
-                </Link>
-              ) : (
-                patient.name || "New Patient"
-              )} */}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
