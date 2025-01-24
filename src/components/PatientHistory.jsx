@@ -1,5 +1,5 @@
 import "../index.css";
-import { Link } from "react-router-dom";
+import {} from "react-router-dom";
 
 const PatientHistory = () => {
   return (
@@ -7,15 +7,13 @@ const PatientHistory = () => {
       {/* Header Section */}
       <div className="flex justify-between items-center mb-5 border-b border-[#854141] pb-3">
         <div className="flex items-center">
-          <img src="/path-to-logo.png" alt="Logo" className="w-16 h-16 mr-3" />
-          <h1 className="text-xl font-bold">Current Status Tab</h1>
+          <img
+            src="https://i.postimg.cc/tTqFRJZY/Cancer-Logo.png"
+            alt="Logo"
+            className="w-16 h-16 mr-3"
+          />
+          <h1 className="text-xl font-bold">Patient History</h1>
         </div>
-        <Link 
-            to="/status"
-            className="bg-[#B83232] text-white py-1 px-4 rounded shadow-md hover:bg-[#A52828]"
-          >
-            Patient History
-        </Link>
       </div>
 
       {/* Table Section */}
@@ -29,38 +27,51 @@ const PatientHistory = () => {
             </tr>
           </thead>
           <tbody>
-            {[{
-              parameter: "NH3 (Ammonia)",
-              value: "90 µg/dL",
-              range: "15-45 µg/dL"
-            }, {
-              parameter: "CO (Carbon Monoxide)",
-              value: "18 ppm",
-              range: "<9 ppm"
-            }, {
-              parameter: "O2 (Oxygen Level)",
-              value: "80 mmHg",
-              range: "75-100 mmHg"
-            }, {
-              parameter: "CO2 (Carbon Dioxide)",
-              value: "55 mmHg",
-              range: "35-45 mmHg"
-            }, {
-              parameter: "SpO2",
-              value: "88%",
-              range: ">85%"
-            }, {
-              parameter: "Heart Rate",
-              value: "115 bpm",
-              range: "60-100 bpm"
-            }].map((row, index) => (
+            {[
+              {
+                parameter: "NH3 (Ammonia)",
+                value: "90 µg/dL",
+                range: "15-45 µg/dL",
+              },
+              {
+                parameter: "CO (Carbon Monoxide)",
+                value: "18 ppm",
+                range: "<9 ppm",
+              },
+              {
+                parameter: "O2 (Oxygen Level)",
+                value: "80 mmHg",
+                range: "75-100 mmHg",
+              },
+              {
+                parameter: "CO2 (Carbon Dioxide)",
+                value: "55 mmHg",
+                range: "35-45 mmHg",
+              },
+              {
+                parameter: "SpO2",
+                value: "88%",
+                range: ">85%",
+              },
+              {
+                parameter: "Heart Rate",
+                value: "115 bpm",
+                range: "60-100 bpm",
+              },
+            ].map((row, index) => (
               <tr
                 key={index}
                 className={index % 2 === 0 ? "bg-[#FAE8E8]" : "bg-white"}
               >
-                <td className="p-3 border border-[#854141] text-center">{row.parameter}</td>
-                <td className="p-3 border border-[#854141] text-center">{row.value}</td>
-                <td className="p-3 border border-[#854141] text-center">{row.range}</td>
+                <td className="p-3 border border-[#854141] text-center">
+                  {row.parameter}
+                </td>
+                <td className="p-3 border border-[#854141] text-center">
+                  {row.value}
+                </td>
+                <td className="p-3 border border-[#854141] text-center">
+                  {row.range}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -68,12 +79,12 @@ const PatientHistory = () => {
       </div>
 
       {/* Organ Health Section */}
-      <div className="mb-5"> 
-  <h4 className="font-bold mb-2">Organ Health Box</h4>
-  <textarea
-    className="w-full h-96 border border-[#854141] rounded p-2 shadow-inner focus:outline-none focus:ring-2 focus:ring-[#854141]"
-    readOnly
-    value={`#### 1. **Hyperammonemia**
+      <div className="mb-5">
+        <h4 className="font-bold mb-2">Organ Health Box</h4>
+        <textarea
+          className="w-full h-96 border border-[#854141] rounded p-2 shadow-inner focus:outline-none focus:ring-2 focus:ring-[#854141]"
+          readOnly
+          value={`#### 1. **Hyperammonemia**
 - **Diagnosis**: Elevated ammonia levels (90 µg/dL) indicate hyperammonemia, which is commonly associated with liver dysfunction, such as hepatic encephalopathy.
 - **Organ Impact**: Primarily affects the liver and brain. High ammonia levels can lead to cerebral edema and neurological symptoms like confusion.
 - **Treatment**:
@@ -104,23 +115,22 @@ const PatientHistory = () => {
 - **Treatment**:
   - **Address Underlying Causes**: Treat hypoxemia and hypercapnia as mentioned above.
   - **Medications**: Beta-blockers or calcium channel blockers if tachycardia persists and is not due to hypoxia.`}
-  />
-</div>
-
+        />
+      </div>
 
       {/* Recommendation Section */}
-      <div className="mb-5"> 
-  <h4 className="font-bold mb-2">Organ Health Box</h4>
-  <textarea
-    className="w-full h-40 border border-[#854141] rounded p-2 shadow-inner focus:outline-none focus:ring-2 focus:ring-[#854141]"
-    readOnly
-    value={`The 55-year-old male patient presents with symptoms of shortness of breath, fatigue, and confusion, which are likely due to a combination of hyperammonemia, carbon monoxide poisoning, hypoxemia, hypercapnia, and tachycardia. The elevated ammonia levels suggest liver dysfunction, possibly hepatic encephalopathy, requiring treatment with lactulose and rifaximin. The high carbon monoxide levels indicate poisoning, necessitating immediate removal from the exposure source and oxygen therapy. Low oxygen saturation and high carbon dioxide levels point to respiratory insufficiency, which should be managed with supplemental oxygen and possibly bronchodilators. The tachycardia is likely a compensatory response to the underlying conditions and should be treated by addressing the primary issues. Comprehensive management includes addressing each condition with appropriate medications and monitoring to prevent further deterioration and ensure the patient's recovery.`}
-  />
-</div>
+      <div className="mb-5">
+        <h4 className="font-bold mb-2">Organ Health Box</h4>
+        <textarea
+          className="w-full h-40 border border-[#854141] rounded p-2 shadow-inner focus:outline-none focus:ring-2 focus:ring-[#854141]"
+          readOnly
+          value={`The 55-year-old male patient presents with symptoms of shortness of breath, fatigue, and confusion, which are likely due to a combination of hyperammonemia, carbon monoxide poisoning, hypoxemia, hypercapnia, and tachycardia. The elevated ammonia levels suggest liver dysfunction, possibly hepatic encephalopathy, requiring treatment with lactulose and rifaximin. The high carbon monoxide levels indicate poisoning, necessitating immediate removal from the exposure source and oxygen therapy. Low oxygen saturation and high carbon dioxide levels point to respiratory insufficiency, which should be managed with supplemental oxygen and possibly bronchodilators. The tachycardia is likely a compensatory response to the underlying conditions and should be treated by addressing the primary issues. Comprehensive management includes addressing each condition with appropriate medications and monitoring to prevent further deterioration and ensure the patient's recovery.`}
+        />
+      </div>
 
       {/* Doctor's Remark Section */}
       <div className="mb-5">
-        <h4 className="font-bold mb-2">Doctor's Remark</h4>
+        <h4 className="font-bold mb-2">Doctor Remark</h4>
         <div className="flex gap-3 mb-3 justify-center">
           {[
             { label: "Excellent", emoji: "😊" },
@@ -144,19 +154,16 @@ const PatientHistory = () => {
       </div>
 
       <div className="mb-5">
-        <h4 className="font-bold mb-2">Doctor's Note</h4>         
+        <h4 className="font-bold mb-2">Doctor Note</h4>
         <textarea
           className="w-full h-12 border border-[#854141] rounded p-2 shadow-inner focus:outline-none focus:ring-2 focus:ring-[#854141]"
           placeholder="Leave a comment..."
         />
       </div>
-      
 
       {/* Submit Button */}
       <div className="text-center">
-        <button
-          className="bg-[#B83232] text-white py-2 px-6 rounded shadow-lg hover:bg-[#A52828]"
-        >
+        <button className="bg-[#B83232] text-white py-2 px-6 rounded shadow-lg hover:bg-[#A52828]">
           Submit
         </button>
       </div>

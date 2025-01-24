@@ -2,22 +2,26 @@ import { useEffect, useState } from "react";
 import "../index.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../api";
-import MarkdownIt from 'markdown-it';
+import MarkdownIt from "markdown-it";
 
-const mdParser = new MarkdownIt({ html: true, linkify: true, typographer: true });
+const mdParser = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+});
 
 const StatusPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [data, setData] = useState()
-  const [htmlContent, setHtmlContent] = useState('');
+  const [data, setData] = useState();
+  const [htmlContent, setHtmlContent] = useState("");
 
   async function fetchData(id) {
     try {
       const response = await api.get(`/status/${id}`);
       if (response.status === 200) {
-        setData(response.data)
-        setHtmlContent(response.data.model_output.output_text)
+        setData(response.data);
+        setHtmlContent(response.data.model_output.output_text);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -42,11 +46,15 @@ const StatusPage = () => {
       {/* Header Section */}
       <div className="flex justify-between items-center mb-5 border-b border-[#854141] pb-3">
         <div className="flex items-center">
-          <img src="https://i.postimg.cc/tTqFRJZY/Cancer-Logo.png" alt="Logo" className="w-16 h-16 mr-3" />
+          <img
+            src="https://i.postimg.cc/tTqFRJZY/Cancer-Logo.png"
+            alt="Logo"
+            className="w-16 h-16 mr-3"
+          />
           <h1 className="text-xl font-bold">Current Status Tab</h1>
         </div>
         <Link
-          to="/status"
+          to="/PatientHistory"
           className="bg-[#B83232] text-white py-1 px-4 rounded shadow-md hover:bg-[#A52828]"
         >
           Patient History
@@ -54,8 +62,7 @@ const StatusPage = () => {
       </div>
 
       {/* Organ Health Section */}
-      {
-        data &&
+      {data && (
         <div className="mb-5">
           {/* <h4 className="font-bold mb-2">Detailed Diagnosis and Treatment</h4> */}
           {/* <textarea
@@ -95,8 +102,7 @@ const StatusPage = () => {
         /> */}
           <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
         </div>
-      }
-
+      )}
 
       {/* Recommendation Section */}
       {/* <div className="mb-5">
@@ -119,7 +125,7 @@ const StatusPage = () => {
       </div> */}
 
       {/* Table Section */}
-      {data &&
+      {data && (
         <div className="mb-5">
           <table className="w-full border-collapse">
             <thead className="bg-[#854141] text-white">
@@ -130,48 +136,64 @@ const StatusPage = () => {
               </tr>
             </thead>
             <tbody>
-              {[{
-                parameter: "NH3 (Ammonia)",
-                value: data.sensor_data.nh3 || "90 µg/dL",
-                range: "15-45 µg/dL"
-              }, {
-                parameter: "CO (Carbon Monoxide)",
-                value: data.sensor_data.co || "18 ppm",
-                range: "<9 ppm"
-              }, {
-                parameter: "O2 (Oxygen Level)",
-                value: data.sensor_data.o2 || "80 %Vol",
-                range: "75-100 %Vol"
-              }, {
-                parameter: "CO2 (Carbon Dioxide)",
-                value: data.sensor_data.co2 || "30,000 ppm",
-                range: "20,000-30,000 ppm"
-              }, {
-                parameter: "SpO2",
-                value: data.sensor_data.spo2 || "88%",
-                range: ">85%"
-              }, {
-                parameter: "Heart Rate",
-                value: data.sensor_data.heart_rate || "115 bpm",
-                range: "60-100 bpm"
-              }].map((row, index) => (
+              {[
+                {
+                  parameter: "NH3 (Ammonia)",
+                  value: data.sensor_data.nh3 || "90 ppm",
+                  range: "15-45 ppm",
+                },
+                {
+                  parameter: "CO (Carbon Monoxide)",
+                  value: data.sensor_data.co || "18 ppm",
+                  range: "<9 ppm",
+                },
+                {
+                  parameter: "O2 (Oxygen Level)",
+                  value: data.sensor_data.o2 || "80 %Vol",
+                  range: "75-100 %Vol",
+                },
+                {
+                  parameter: "CO2 (Carbon Dioxide)",
+                  value: data.sensor_data.co2 || "30,000 ppm",
+                  range: "20,000-30,000 ppm",
+                },
+                {
+                  parameter: "SpO2",
+                  value: data.sensor_data.spo2 || "88%",
+                  range: ">85%",
+                },
+                {
+                  parameter: "Heart Rate",
+                  value: data.sensor_data.heart_rate || "115 bpm",
+                  range: "60-100 bpm",
+                },
+              ].map((row, index) => (
                 <tr
                   key={index}
                   className={index % 2 === 0 ? "bg-[#FAE8E8]" : "bg-white"}
                 >
-                  <td className="p-3 border border-[#854141] text-center">{row.parameter}</td>
-                  <td className="p-3 border border-[#854141] text-center">{row.value}</td>
-                  <td className="p-3 border border-[#854141] text-center">{row.range}</td>
+                  <td className="p-3 border border-[#854141] text-center">
+                    {row.parameter}
+                  </td>
+                  <td className="p-3 border border-[#854141] text-center">
+                    {row.value}
+                  </td>
+                  <td className="p-3 border border-[#854141] text-center">
+                    {row.range}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      }
+      )}
 
       {/* Doctor's Remark Section */}
       <div className="mb-5">
-        <h4 className="font-bold mb-2">Doctor's Remark [Please share your view about the above Diagnosis and Recommendation]</h4>
+        <h4 className="font-bold mb-2">
+          Doctor's Remark [Please share your view about the above Diagnosis and
+          Recommendation]
+        </h4>
         <div className="flex gap-3 mb-3 justify-center">
           {[
             { label: "Excellent", emoji: "😊" },
@@ -195,19 +217,21 @@ const StatusPage = () => {
       </div>
 
       <div className="mb-5">
-        <h4 className="font-bold mb-2">Doctor's note [Please share your own Patient's Diagnosis and Line of Treatment</h4>
+        <h4 className="font-bold mb-2">
+          Doctor's note [Please share your own Patient's Diagnosis and Line of
+          Treatment
+        </h4>
         <textarea
           className="w-full h-12 border border-[#854141] rounded p-2 shadow-inner focus:outline-none focus:ring-2 focus:ring-[#854141]"
           placeholder="Leave a comment..."
         />
       </div>
 
-
       {/* Submit Button */}
       <div className="text-center">
         <button
           className="bg-[#B83232] text-white py-2 px-6 rounded shadow-lg hover:bg-[#A52828]"
-          onClick={()=>navigate('/')}
+          onClick={() => navigate("/")}
         >
           Submit
         </button>
