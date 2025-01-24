@@ -191,8 +191,8 @@ const StatusPage = () => {
       {/* Doctor's Remark Section */}
       <div className="mb-5">
         <h4 className="font-bold mb-2">
-          Doctor's Remark [Please share your view about the above Diagnosis and
-          Recommendation]
+          {`Doctor's Remark [Please share your view about the above Diagnosis and
+          Recommendation]`}
         </h4>
         <div className="flex gap-3 mb-3 justify-center">
           {[
@@ -218,8 +218,7 @@ const StatusPage = () => {
 
       <div className="mb-5">
         <h4 className="font-bold mb-2">
-          Doctor's note [Please share your own Patient's Diagnosis and Line of
-          Treatment
+          {`Doctor's note [Please share your own Patient's Diagnosis and Line of Treatment]`}
         </h4>
         <textarea
           className="w-full h-12 border border-[#854141] rounded p-2 shadow-inner focus:outline-none focus:ring-2 focus:ring-[#854141]"
