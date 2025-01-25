@@ -17,7 +17,7 @@ export const LoginPage = ({ onLogin }) => {
 
   const fetchData = async () => {
     try {
-      const response = await api.get('login')
+      const response = await api.get('/login')
       if (response.status === 200) {
         setDiagnosisCount(response.data.totalPatitents)
       }
