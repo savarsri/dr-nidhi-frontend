@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { OtpInput } from "./OtpInput";
 import { useTreatment } from "../context/TreatmentContext";
 import Cookies from "js-cookie";
+import api from "../api";
 
 export const LoginPage = ({ onLogin }) => {
 
@@ -13,6 +14,21 @@ export const LoginPage = ({ onLogin }) => {
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [error, setError] = useState("");
   const [diagnosisCount, setDiagnosisCount] = useState(1587);
+
+  const fetchData = async () => {
+    try {
+      const response = await api.get('/login')
+      if (response.status === 200) {
+        setDiagnosisCount(response.data.totalPatitents)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const handleSubmitPhone = (e) => {
     e.preventDefault();
