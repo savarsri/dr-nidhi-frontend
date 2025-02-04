@@ -6,13 +6,23 @@ import api from "../api.js";
 
 export const Dashboard = ({ onLogout }) => {
   const [patients, setPatients] = useState([]);
+  const [filter, setFilter] = useState("");
   const [totalPatients, setTotalPatients] = useState([]);
+  const [monthPatients, setMonthPatients] = useState(35);
   const [loading, setLoading] = useState(false);
 
-  const fetchData = async () => {
+  const filterMap = {
+    "Today": "today",
+    "Yesterday": "yesterday",
+    "Last Week": "last_week",
+    "Last Month": "last_month",
+    "Old/Archive": "old",
+  };
+
+  const fetchPatients = async () => {
     setLoading(true);
     try {
-      const response = await api.get("/patient");
+      const response = await api.get(`/patient?date_filter=${filter}`);
       if (response.status === 200) {
         const mappedData = response.data.map((item) => {
           const utcDate = new Date(item.created_at);
@@ -49,13 +59,26 @@ export const Dashboard = ({ onLogout }) => {
     }
   };
 
+  const fetchData = async () => {
+    try {
+      const response = await api.get('/login')
+      if (response.status === 200) {
+        setTotalPatients(response.data.totalPatients)
+        setMonthPatients(response.data.newPatientsThisMonth)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
+    fetchPatients();
     fetchData();
-  }, []);
+  }, [filter]);
 
   const stats = [
     { label: "Total Patients", value: totalPatients, icon: Users },
-    { label: "New This Month", value: totalPatients, icon: UserPlus },
+    { label: "New This Month", value: monthPatients, icon: UserPlus },
   ];
 
   if (loading) {
@@ -118,6 +141,11 @@ export const Dashboard = ({ onLogout }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               key={tab}
+              onClick={() => {
+                const filterValue = filterMap[tab];
+                setFilter(filterValue);
+                return;
+              }}
               className="bg-[#FAE8E8] text-[#2D3436] border border-[#854141] rounded px-3 py-1 shadow-md hover:shadow-lg hover:bg-[#F4DADA] transition duration-600"
             >
               {tab}
