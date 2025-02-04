@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Users, UserPlus, Layout, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import api from "../api.js";
 
 export const Dashboard = ({ onLogout }) => {
@@ -40,7 +41,6 @@ export const Dashboard = ({ onLogout }) => {
 
         setPatients(mappedData);
         setTotalPatients(mappedData.length);
-        console.log(mappedData);
       }
     } catch (error) {
       console.log(error);
@@ -60,35 +60,43 @@ export const Dashboard = ({ onLogout }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="w-6 h-6 border-4 border-t-4 border-gray-300 border-solid rounded-full animate-spin border-t-blue-500"></div>
-        <span className="ml-3 text-xl text-gray-700">Loading...</span>
+      <div className="flex justify-center items-center min-h-screen bg-[#FDF5F5]">
+        <div className="flex flex-col justify-center items-center">
+          <div
+            className="w-10 h-10 border-4 border-t-4 border-[#FAE8E8] border-solid rounded-full animate-spin"
+            style={{ borderTopColor: "#D64545" }}
+          ></div>
+          <span className="mt-4 text-lg font-medium text-[#2D3436]">
+            Loading, please wait...
+          </span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="bg-white shadow-sm">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-background"
+    >
+      {/* Navigation */}
+      <nav className="bg-white shadow-md transition-all duration-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 relative">
-            {/* Left Section */}
             <div className="flex items-center">
               <Layout className="w-6 h-6 text-primary" />
               <span className="ml-2 text-xl font-semibold text-text">
                 Dr. Nidhi
               </span>
             </div>
-
-            {/* Center Section */}
             <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xl font-bold text-text">
               Good Morning, Dr. Abhijeet
             </h1>
-
-            {/* Right Section */}
             <button
               onClick={onLogout}
-              className="flex items-center text-accent hover:text-deeper"
+              className="flex items-center text-accent hover:text-deeper transition duration-300"
             >
               <LogOut className="w-5 h-5 mr-1" />
               Logout
@@ -97,25 +105,39 @@ export const Dashboard = ({ onLogout }) => {
         </div>
       </nav>
 
-      {/* Tabs Section */}
-      <div className="flex gap-3 my-5 justify-center">
+      {/* Tabs */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="flex gap-3 my-5 justify-center"
+      >
         {["Today", "Yesterday", "Last Week", "Last Month", "Old/Archive"].map(
           (tab) => (
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               key={tab}
-              className="bg-[#FAE8E8] text-[#2D3436] border border-[#854141] rounded px-3 py-1 shadow-md hover:bg-[#F4DADA]"
+              className="bg-[#FAE8E8] text-[#2D3436] border border-[#854141] rounded px-3 py-1 shadow-md hover:shadow-lg hover:bg-[#F4DADA] transition duration-600"
             >
               {tab}
-            </button>
+            </motion.button>
           )
         )}
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 mb-8">
+      {/* Stats */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 mb-8"
+      >
         {stats.map((stat) => (
-          <div
+          <motion.div
+            whileHover={{ scale: 1.05 }}
             key={stat.label}
-            className="bg-white overflow-hidden shadow rounded-lg"
+            className="bg-white overflow-hidden shadow-md hover:shadow-lg rounded-lg transition duration-600"
           >
             <div className="p-5">
               <div className="flex items-center">
@@ -134,11 +156,16 @@ export const Dashboard = ({ onLogout }) => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
-      <div
-        className="shadow overflow-hidden sm:rounded-lg"
+      </motion.div>
+
+      {/* Patients Table */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.6 }}
+        className="shadow-md hover:shadow-lg overflow-hidden sm:rounded-lg transition duration-600"
         style={{ background: "#FFFFFF", border: "1px solid #FAE8E8" }}
       >
         <table
@@ -147,106 +174,68 @@ export const Dashboard = ({ onLogout }) => {
         >
           <thead style={{ background: "#FAE8E8" }}>
             <tr>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                style={{ color: "#854141" }}
-              >
-                Name
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                style={{ color: "#854141" }}
-              >
-                Age
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                style={{ color: "#854141" }}
-              >
-                Gender
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                style={{ color: "#854141" }}
-              >
-                Phone
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                style={{ color: "#854141" }}
-              >
-                Date
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                style={{ color: "#854141" }}
-              >
-                Time
-              </th>
+              {["Name", "Age", "Gender", "Phone", "Date", "Time"].map(
+                (header) => (
+                  <th
+                    key={header}
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                    style={{ color: "#854141" }}
+                  >
+                    {header}
+                  </th>
+                )
+              )}
             </tr>
           </thead>
           <tbody style={{ background: "#FFFFFF", borderColor: "#854141" }}>
             {patients.map((patient) => (
-              <tr
+              <motion.tr
+                whileHover={{ scale: 1.02 }}
                 key={patient.id}
+                className="hover:bg-[#FAF2F2] transition duration-300"
                 style={{ borderBottom: "1px solid #FAE8E8" }}
               >
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div
-                    className="text-sm font-medium"
-                    style={{ color: "#2D3436" }}
+                  <Link
+                    to={`/patient/new?id=${patient.id}&number=${patient.patient_mobile_number}`}
+                    className="text-sm font-medium text-[#2D3436] hover:underline"
                   >
-                    {patient.model_output_id ? (
-                      <Link to={`/status/${patient.model_output_id}`}>
-                        {patient.patient_name || "New Patient"}
-                      </Link>
-                    ) : (
-                      <Link
-                        to={`/patient/new?id=${patient.id}&number=${patient.patient_mobile_number}`}
-                      >
-                        {patient.patient_name || "New Patient"}
-                      </Link>
-                    )}
-                  </div>
+                    {patient.patient_name || "New Patient"}
+                  </Link>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm" style={{ color: "#2D3436" }}>
-                    {patient.patient_age}
-                  </div>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
+                  {patient.patient_age}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm" style={{ color: "#2D3436" }}>
-                    {patient.patient_gender}
-                  </div>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
+                  {patient.patient_gender}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm" style={{ color: "#2D3436" }}>
-                    {patient.patient_mobile_number}
-                  </div>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
+                  {patient.patient_mobile_number}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm" style={{ color: "#2D3436" }}>
-                    {patient.date}
-                  </div>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
+                  {patient.date}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm" style={{ color: "#2D3436" }}>
-                    {patient.time}
-                  </div>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
+                  {patient.time}
                 </td>
-              </tr>
+              </motion.tr>
             ))}
           </tbody>
         </table>
-      </div>
+      </motion.div>
 
       {/* Footer */}
-      <div className="bg-background border-t border-accent text-center py-4 mt-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.8 }}
+        className="bg-background border-t border-accent text-center py-4 mt-4"
+      >
         <p className="text-sm text-text">
           Product by <strong>Gloport Photonix Innovations Pvt Ltd</strong> | ©
           2025 All Rights Reserved
         </p>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
