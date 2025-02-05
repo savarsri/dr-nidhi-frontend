@@ -224,12 +224,17 @@ export const Dashboard = ({ onLogout }) => {
                 style={{ borderBottom: "1px solid #FAE8E8" }}
               >
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <Link
-                    to={`/patient/new?id=${patient.id}&number=${patient.patient_mobile_number}`}
-                    className="text-sm font-medium text-[#2D3436] hover:underline"
-                  >
-                    {patient.patient_name || "New Patient"}
-                  </Link>
+                  {patient.model_output_id ? (
+                    <Link to={`/status/${patient.model_output_id}`}>
+                      {patient.patient_name || "New Patient"}
+                    </Link>
+                  ) : (
+                    <Link
+                      to={`/patient/new?id=${patient.id}&number=${patient.patient_mobile_number}`}
+                    >
+                      {patient.patient_name || "New Patient"}
+                    </Link>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
                   {patient.patient_age}

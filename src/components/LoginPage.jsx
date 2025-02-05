@@ -19,7 +19,7 @@ export const LoginPage = ({ onLogin }) => {
     try {
       const response = await api.get('/login')
       if (response.status === 200) {
-        setDiagnosisCount(response.data.totalPatitents)
+        setDiagnosisCount(response.data.totalPatients || 127)
       }
     } catch (error) {
       console.log(error);
