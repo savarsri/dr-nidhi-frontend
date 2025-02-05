@@ -4,6 +4,7 @@ import { OtpInput } from "./OtpInput";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setTreatmentType } from "../redux/patientSlice";
+import { Link } from "react-router-dom";
 
 export const LoginPage = ({ onLogin }) => {
 
@@ -132,6 +133,11 @@ export const LoginPage = ({ onLogin }) => {
               </button>
             </form>
           )}
+          <div className="text-center mb-8">
+            <Link to='/register'>
+              <p className="text-accent mt-2">Don't have an account? Register here</p>
+            </Link>
+          </div>
         </div>
       </div>
 
