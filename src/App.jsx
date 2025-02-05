@@ -5,6 +5,7 @@ import { LoginPage } from "./components/LoginPage";
 import { Dashboard } from "./components/Dashboard";
 import { PatientEntry } from "./components/PatientEntry";
 import { PatientList } from "./components/PatientList";
+import { Register } from "./components/Register";
 import StatusPage from "./components/StatusPage";
 import Cookies from "js-cookie";
 import { TreatmentProvider } from "./context/TreatmentContext";
@@ -46,18 +47,22 @@ function App() {
                 <LoginPage onLogin={() => setIsAuthenticated(true)} />
               )
             }
-            // element={
-            //   isAuthenticated ? (
-            //     <Dashboard onLogout={() => setIsAuthenticated(false)} />
-            //   ) : (
-            //     <LoginPage onLogin={() => setIsAuthenticated(true)} />
-            //   )
-            // }
+          // element={
+          //   isAuthenticated ? (
+          //     <Dashboard onLogout={() => setIsAuthenticated(false)} />
+          //   ) : (
+          //     <LoginPage onLogin={() => setIsAuthenticated(true)} />
+          //   )
+          // }
+          />
+          <Route
+            path="/register"
+            element={<Register />}
           />
           <Route
             path="/patient/new"
             element={isAuthenticated ? <PatientEntry /> : <Navigate to="/" />}
-            // element={<PatientEntry />}
+          // element={<PatientEntry />}
           />
           <Route
             path="/patients"

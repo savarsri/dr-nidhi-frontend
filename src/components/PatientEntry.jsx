@@ -3,6 +3,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api';
 import { useTreatment } from '../context/TreatmentContext';
+import NavBar from './NavBar';
 
 export const PatientEntry = () => {
   const navigate = useNavigate();
@@ -91,8 +92,9 @@ export const PatientEntry = () => {
 
   return (
     <div className="min-h-screen" style={{ background: '#FDF5F5' }}>
+      <NavBar />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8 flex items-center">
+        {/* <div className="mb-8 flex items-center">
           <Link
             to="/"
             className="flex items-center"
@@ -101,7 +103,7 @@ export const PatientEntry = () => {
             <ArrowLeft className="w-5 h-5 mr-1" />
             Back to Dashboard
           </Link>
-        </div>
+        </div> */}
 
         <div
           className="shadow rounded-lg p-6"

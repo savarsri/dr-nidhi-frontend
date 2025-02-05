@@ -1,15 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Users, UserPlus, Layout, LogOut } from "lucide-react";
+import { Users, UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import api from "../api.js";
+import NavBar from "./NavBar.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTotalPatients } from "../redux/patientSlice.js";
 
 export const Dashboard = ({ onLogout }) => {
   const [patients, setPatients] = useState([]);
   const [filter, setFilter] = useState("");
-  const [totalPatients, setTotalPatients] = useState([]);
-  const [monthPatients, setMonthPatients] = useState(35);
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
+  const { totalPatients, newPatientsThisMonth } = useSelector((state) => state.patients);
+
+  useEffect(() => {
+    const lastFetchTime = localStorage.getItem("lastFetchTime");
+    const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+
+    if (!totalPatients || !newPatientsThisMonth || !lastFetchTime || (Date.now() - parseInt(lastFetchTime) >= oneHour)) {
+      dispatch(fetchTotalPatients());
+    }
+  }, [dispatch, totalPatients, newPatientsThisMonth]);
 
   const filterMap = {
     "Today": "today",
@@ -50,7 +63,6 @@ export const Dashboard = ({ onLogout }) => {
         });
 
         setPatients(mappedData);
-        setTotalPatients(mappedData.length);
       }
     } catch (error) {
       console.log(error);
@@ -59,26 +71,13 @@ export const Dashboard = ({ onLogout }) => {
     }
   };
 
-  const fetchData = async () => {
-    try {
-      const response = await api.get('/login')
-      if (response.status === 200) {
-        setTotalPatients(response.data.totalPatients)
-        setMonthPatients(response.data.newPatientsThisMonth)
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   useEffect(() => {
     fetchPatients();
-    fetchData();
   }, [filter]);
 
   const stats = [
     { label: "Total Patients", value: totalPatients, icon: Users },
-    { label: "New This Month", value: monthPatients, icon: UserPlus },
+    { label: "New This Month", value: newPatientsThisMonth, icon: UserPlus },
   ];
 
   if (loading) {
@@ -104,30 +103,7 @@ export const Dashboard = ({ onLogout }) => {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-background"
     >
-      {/* Navigation */}
-      <nav className="bg-white shadow-md transition-all duration-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 relative">
-            <div className="flex items-center">
-              <Layout className="w-6 h-6 text-primary" />
-              <span className="ml-2 text-xl font-semibold text-text">
-                Dr. Nidhi
-              </span>
-            </div>
-            <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xl font-bold text-text">
-              Good Morning, Dr. Abhijeet
-            </h1>
-            <button
-              onClick={onLogout}
-              className="flex items-center text-accent hover:text-deeper transition duration-300"
-            >
-              <LogOut className="w-5 h-5 mr-1" />
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
-
+      <NavBar />
       {/* Tabs */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}

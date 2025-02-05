@@ -1,34 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { OtpInput } from "./OtpInput";
-import { useTreatment } from "../context/TreatmentContext";
 import Cookies from "js-cookie";
-import api from "../api";
+import { useDispatch, useSelector } from "react-redux";
+import { setTreatmentType } from "../redux/patientSlice";
 
 export const LoginPage = ({ onLogin }) => {
 
-  const { treatmentType, setTreatmentType } = useTreatment();
-
+  const dispatch = useDispatch();
+  const { totalPatients, treatmentType } = useSelector((state) => state.patients);
   const [phone, setPhone] = useState("");
   const [showOtp, setShowOtp] = useState(false);
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [error, setError] = useState("");
-  const [diagnosisCount, setDiagnosisCount] = useState(1587);
-
-  const fetchData = async () => {
-    try {
-      const response = await api.get('/login')
-      if (response.status === 200) {
-        setDiagnosisCount(response.data.totalPatients || 127)
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchData()
-  }, [])
 
   const handleSubmitPhone = (e) => {
     e.preventDefault();
@@ -56,7 +40,7 @@ export const LoginPage = ({ onLogin }) => {
       <div className="bg-[#FDF5F5] text-[#2D3436] text-center py-2 shadow-md">
         <p className="text-lg font-semibold">
           Total Patient Diagnoses:{" "}
-          <span className="text-deeper">{diagnosisCount}</span>
+          <span className="text-deeper">{totalPatients}</span>
         </p>
       </div>
 
@@ -88,7 +72,7 @@ export const LoginPage = ({ onLogin }) => {
                 <select
                   id="treatment"
                   value={treatmentType}
-                  onChange={(e) => setTreatmentType(e.target.value)}
+                  onChange={(e) => dispatch(setTreatmentType(e.target.value))}
                   className="block w-full px-4 py-3 mt-1 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
                   required
                 >
