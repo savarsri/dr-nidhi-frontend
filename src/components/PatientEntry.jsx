@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Save } from 'lucide-react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Save } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api';
-import { useTreatment } from '../context/TreatmentContext';
+import Loader1 from "./Loader1"
 import NavBar from './NavBar';
 
 export const PatientEntry = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { treatmentType, setTreatmentType } = useTreatment();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  // New state to track if patient data has been fetched from the API
+  const [isFetched, setIsFetched] = useState(false);
 
   const [formData, setFormData] = useState(() => ({
     id: searchParams.get('id') || 0,
@@ -20,91 +21,91 @@ export const PatientEntry = () => {
     majorsymptoms: '',
     medicalHistory: '',
     attachments: [],
-    medication_type: treatmentType || ''
+    medication_type: ''
   }));
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true)
+      setLoading(true);
       try {
-        const response = await api.get(`/patient/${formData.phone}`)
+        const response = await api.get(`/patient/${formData.phone}`);
         if (response.status === 200) {
-          const data = response.data
-          setFormData((prev) => ({ ...prev, name: data.name || '' }));
-          setFormData((prev) => ({ ...prev, age: data.age || '' }));
-          setFormData((prev) => ({ ...prev, gender: data.gender || '' }));
-          setLoading(false)
+          const data = response.data;
+          setFormData((prev) => ({
+            ...prev,
+            name: data.name || '',
+            age: data.age || '',
+            gender: data.gender || ''
+          }));
+          // Mark that patient data has been fetched so fetched fields can be disabled
+          setIsFetched(true);
         }
       } catch (error) {
         console.log(error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchData()
-  }, [searchParams])
+    fetchData();
+  }, [searchParams]);
 
   useEffect(() => {
     if (!formData.phone) {
-      setFormData((prev) => ({ ...prev, phone: searchParams.get('number') || '' }));
+      setFormData((prev) => ({
+        ...prev,
+        phone: searchParams.get('number') || ''
+      }));
     }
   }, [searchParams]);
 
   useEffect(() => {
     if (!formData.id) {
-      setFormData((prev) => ({ ...prev, id: searchParams.get('id') || '' }));
+      setFormData((prev) => ({
+        ...prev,
+        id: searchParams.get('id') || ''
+      }));
     }
   }, [searchParams]);
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
-    if (!formData.phone) {
-      setFormData({ ...formData, phone: searchParams.get('number') })
+    if (
+      !formData.id.trim() ||
+      !formData.name.trim() ||
+      !formData.age.toString().trim() || // if age is a number, convert to string
+      !formData.gender.trim() ||
+      !formData.phone.trim() ||
+      !formData.majorsymptoms.trim()
+    ) {
+      alert('Please fill in all required fields.');
+      return;
     }
 
     console.log('Form submitted:', formData);
     try {
-      const response = await api.post('/generate', formData)
+      setLoading(true);
+      const response = await api.post('/generate', formData);
 
       if (response.status === 200) {
         console.log(response.data);
-        navigate(`/status/${response.data.model_output_id}`)
+        navigate(`/status/${response.data.model_output_id}`);
       }
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="w-6 h-6 border-4 border-t-4 border-gray-300 border-solid rounded-full animate-spin border-t-blue-500"></div>
-        <span className="ml-3 text-xl text-gray-700">Loading...</span>
-      </div>
-    );
+    return <Loader1 />
   }
-
 
   return (
     <div className="min-h-screen" style={{ background: '#FDF5F5' }}>
       <NavBar />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* <div className="mb-8 flex items-center">
-          <Link
-            to="/"
-            className="flex items-center"
-            style={{ color: '#D64545' }}
-          >
-            <ArrowLeft className="w-5 h-5 mr-1" />
-            Back to Dashboard
-          </Link>
-        </div> */}
-
         <div
           className="shadow rounded-lg p-6"
           style={{ background: '#FFFFFF', border: '1px solid #FAE8E8' }}
@@ -117,69 +118,73 @@ export const PatientEntry = () => {
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Full Name */}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-1">
+              <div>
+                <label
+                  htmlFor="fullname"
+                  className="block text-sm font-medium text-text"
+                >
+                  Full Name*
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    id="fullname"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    className="block w-full px-4 py-3 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
+                    placeholder="Enter full name"
+                    required
+                    disabled={isFetched} // disable if patient data was fetched
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Age, Gender, Phone Number, Medication Type */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <label
-                  className="block text-sm font-medium"
-                  style={{ color: '#2D3436' }}
+                  htmlFor="age"
+                  className="block text-sm font-medium text-text"
                 >
-                  Full Name
+                  Age*
                 </label>
-                <input
-                  type="text"
-                  required
-                  className="mt-1 block w-full rounded-md shadow-sm"
-                  style={{
-                    border: '1px solid #854141',
-                    background: '#FFFFFF',
-                  }}
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                />
+                <div className="mt-1">
+                  <input
+                    type="number"
+                    id="age"
+                    value={formData.age}
+                    onChange={(e) =>
+                      setFormData({ ...formData, age: e.target.value })
+                    }
+                    className="block w-full px-4 py-3 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
+                    placeholder="Enter age"
+                    required
+                    disabled={isFetched} // disable if patient data was fetched
+                  />
+                </div>
               </div>
 
               <div>
                 <label
-                  className="block text-sm font-medium"
-                  style={{ color: '#2D3436' }}
+                  htmlFor="gender"
+                  className="block text-sm font-medium text-text"
                 >
-                  Age
-                </label>
-                <input
-                  type="number"
-                  required
-                  className="mt-1 block w-full rounded-md shadow-sm"
-                  style={{
-                    border: '1px solid #854141',
-                    background: '#FFFFFF',
-                  }}
-                  value={formData.age}
-                  onChange={(e) =>
-                    setFormData({ ...formData, age: e.target.value })
-                  }
-                />
-              </div>
-
-              <div>
-                <label
-                  className="block text-sm font-medium"
-                  style={{ color: '#2D3436' }}
-                >
-                  Gender
+                  Gender*
                 </label>
                 <select
                   required
-                  className="mt-1 block w-full rounded-md shadow-sm"
-                  style={{
-                    border: '1px solid #854141',
-                    background: '#FFFFFF',
-                  }}
+                  id="gender"
+                  className="block w-full px-4 py-3 mt-1 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
                   value={formData.gender}
                   onChange={(e) =>
                     setFormData({ ...formData, gender: e.target.value })
                   }
+                  disabled={isFetched} // disable if patient data was fetched
                 >
                   <option value="">Select gender</option>
                   <option value="male">Male</option>
@@ -190,50 +195,72 @@ export const PatientEntry = () => {
 
               <div>
                 <label
-                  className="block text-sm font-medium"
-                  style={{ color: '#2D3436' }}
+                  htmlFor="phonenumber"
+                  className="block text-sm font-medium text-text"
                 >
-                  Phone Number
+                  Phone Number*
                 </label>
                 <input
-                  type="tel"
+                  type="number"
                   required
-                  className="mt-1 block w-full rounded-md shadow-sm"
-                  style={{
-                    border: '1px solid #854141',
-                    background: '#FFFFFF',
-                  }}
+                  id="phonenumber"
+                  className="block w-full px-4 py-3 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
                   value={formData.phone}
                   onChange={(e) =>
                     setFormData({ ...formData, phone: e.target.value })
                   }
+                  disabled // always disabled so the phone number cannot be edited
                 />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="medication"
+                  className="block text-sm font-medium text-text"
+                >
+                  Medication Type*
+                </label>
+                <select
+                  required
+                  id="medication"
+                  className="block w-full px-4 py-3 mt-1 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
+                  value={formData.medication_type}
+                  onChange={(e) =>
+                    setFormData({ ...formData, medication_type: e.target.value })
+                  }
+                >
+                  <option value="">Select medication type</option>
+                  <option value="allopathy">Allopathy</option>
+                  <option value="homeopathy">Homeopathy</option>
+                  <option value="ayurveda">Ayurveda</option>
+                </select>
               </div>
             </div>
 
-
-
+            {/* Major Symptoms */}
             <div>
               <label
                 className="block text-sm font-medium"
                 style={{ color: '#2D3436' }}
               >
-                Major Symptoms
+                Major Symptoms*
               </label>
               <textarea
                 rows={3}
                 className="mt-1 block w-full rounded-md shadow-sm"
                 style={{
                   border: '1px solid #854141',
-                  background: '#FFFFFF',
+                  background: '#FFFFFF'
                 }}
                 value={formData.majorsymptoms}
                 onChange={(e) =>
                   setFormData({ ...formData, majorsymptoms: e.target.value })
                 }
+                required
               />
             </div>
 
+            {/* Medical History */}
             <div>
               <label
                 className="block text-sm font-medium"
@@ -246,7 +273,7 @@ export const PatientEntry = () => {
                 className="mt-1 block w-full rounded-md shadow-sm"
                 style={{
                   border: '1px solid #854141',
-                  background: '#FFFFFF',
+                  background: '#FFFFFF'
                 }}
                 value={formData.medicalHistory}
                 onChange={(e) =>
@@ -255,6 +282,7 @@ export const PatientEntry = () => {
               />
             </div>
 
+            {/* Attachments */}
             <div className="mt-4">
               <label
                 className="block text-sm font-medium"
@@ -267,26 +295,24 @@ export const PatientEntry = () => {
                 className="mt-1 block w-full rounded-md shadow-sm"
                 style={{
                   border: '1px solid #854141',
-                  background: '#FFFFFF',
+                  background: '#FFFFFF'
                 }}
                 onChange={(e) => {
                   if (e.target.files) {
                     setFormData({
                       ...formData,
-                      attachments: Array.from(e.target.files),
+                      attachments: Array.from(e.target.files)
                     });
                   }
                 }}
                 multiple
               />
-              <p
-                className="mt-1 text-sm"
-                style={{ color: '#854141' }}
-              >
+              <p className="mt-1 text-sm" style={{ color: '#854141' }}>
                 You can upload multiple files.
               </p>
             </div>
 
+            {/* Submit Button */}
             <div className="flex justify-end">
               <button
                 type="submit"
@@ -294,7 +320,7 @@ export const PatientEntry = () => {
                 style={{
                   background: '#D64545',
                   color: '#FFFFFF',
-                  border: 'none',
+                  border: 'none'
                 }}
               >
                 <Save className="w-5 h-5 mr-2" />

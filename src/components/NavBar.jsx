@@ -1,18 +1,36 @@
 import { Layout, LogOut, ArrowLeft } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { clearUser } from "../redux/userSlice"; // Adjust the path as needed
+import { useNavigate, useLocation } from "react-router-dom";
 
 const NavBar = () => {
+    // Use useLocation to determine the current path
     const location = useLocation();
-    const navigate = useNavigate();
     const showBackButton = location.pathname !== "/";
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    // Access the user from the Redux store
+    const { user } = useSelector((state) => state.user);
+
     const handleLogout = () => {
-        Cookies.remove("login");
-        window.location.reload()
-        navigate('/')
-        return;
-    }
+        // Remove tokens from localStorage
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("refreshToken");
+
+        // Clear the user from the Redux store
+        dispatch(clearUser());
+
+        // Navigate to the login page
+        navigate("/");
+    };
+
+    // If user exists, capitalize the first letter of the full name
+    const fullName =
+        user?.full_name && typeof user.full_name === "string"
+            ? user.full_name.charAt(0).toUpperCase() + user.full_name.slice(1)
+            : "";
 
     return (
         <nav className="bg-white shadow-md transition-all duration-500">
@@ -33,7 +51,7 @@ const NavBar = () => {
                         </span>
                     </div>
                     <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xl font-bold text-text">
-                        Good Morning, Dr. Abhijeet
+                        {fullName ? `Good Morning, ${fullName}` : "Good Morning"}
                     </h1>
                     <button
                         className="flex items-center text-accent hover:text-deeper transition duration-300"
@@ -46,6 +64,6 @@ const NavBar = () => {
             </div>
         </nav>
     );
-}
+};
 
 export default NavBar;

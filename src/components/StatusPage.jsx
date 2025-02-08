@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 import MarkdownIt from "markdown-it";
 import NavBar from "./NavBar";
+import Loader1 from "./Loader1"
 
 const mdParser = new MarkdownIt({
   html: true,
@@ -16,16 +17,22 @@ const StatusPage = () => {
   const navigate = useNavigate();
   const [data, setData] = useState();
   const [htmlContent, setHtmlContent] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function fetchData(id) {
     try {
+      setLoading(true)
       const response = await api.get(`/status/${id}`);
       if (response.status === 200) {
         setData(response.data);
         setHtmlContent(response.data.model_output.output_text);
       }
     } catch (error) {
+      navigate(-1);
       console.error("Error fetching data:", error);
+    }
+    finally {
+      setLoading(false)
     }
   }
 
@@ -41,6 +48,10 @@ const StatusPage = () => {
       setHtmlContent(parsedContent);
     }
   }, [data]);
+
+  if (loading) {
+    return <Loader1 />
+  }
 
   return (
     <div>

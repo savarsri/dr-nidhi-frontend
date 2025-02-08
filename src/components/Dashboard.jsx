@@ -7,7 +7,7 @@ import NavBar from "./NavBar.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTotalPatients } from "../redux/patientSlice.js";
 
-export const Dashboard = ({ onLogout }) => {
+export const Dashboard = () => {
   const [patients, setPatients] = useState([]);
   const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState(false);
