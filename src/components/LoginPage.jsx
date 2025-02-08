@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setTreatmentType } from "../redux/patientSlice";
+import { fetchTotalPatients } from "../redux/patientSlice.js";
 import { fetchUser } from "../redux/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
@@ -11,11 +12,20 @@ export const LoginPage = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { totalPatients, treatmentType } = useSelector((state) => state.patients);
+  const { totalPatients, treatmentType, newPatientsThisMonth } = useSelector((state) => state.patients);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const lastFetchTime = localStorage.getItem("lastFetchTime");
+    const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+
+    if (!totalPatients || !newPatientsThisMonth || !lastFetchTime || (Date.now() - parseInt(lastFetchTime) >= oneHour)) {
+      dispatch(fetchTotalPatients());
+    }
+  }, [dispatch, totalPatients, newPatientsThisMonth]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTotalPatients } from "../redux/patientSlice.js";
 import api from "../api";
 import Loader1 from "./Loader1"
 
 export const Register = () => {
-
-    const { totalPatients } = useSelector((state) => state.patients);
     const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
@@ -19,6 +18,18 @@ export const Register = () => {
     const [loading, setLoading] = useState(false);
     const [showScreen, setShowScreen] = useState(0);
     const [error, setError] = useState("");
+
+    const dispatch = useDispatch();
+    const { totalPatients, newPatientsThisMonth } = useSelector((state) => state.patients);
+
+    useEffect(() => {
+        const lastFetchTime = localStorage.getItem("lastFetchTime");
+        const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+
+        if (!totalPatients || !newPatientsThisMonth || !lastFetchTime || (Date.now() - parseInt(lastFetchTime) >= oneHour)) {
+            dispatch(fetchTotalPatients());
+        }
+    }, [dispatch, totalPatients, newPatientsThisMonth]);
 
     const handleSubmitName = (e) => {
         e.preventDefault();
@@ -91,11 +102,11 @@ export const Register = () => {
         try {
             const response = await api.post("/user", {
                 username,
-                full_name : name,
-                phone_number:phoneNumber,
+                full_name: name,
+                phone_number: phoneNumber,
                 designation,
                 password,
-                role:"doctor"
+                role: "doctor"
             });
 
             if (response.status === 201) {
