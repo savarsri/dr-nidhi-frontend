@@ -23,7 +23,7 @@ const NavBar = () => {
         dispatch(clearUser());
 
         // Navigate to the login page
-        navigate("/");
+        navigate("/login");
     };
 
     // If user exists, capitalize the first letter of the full name

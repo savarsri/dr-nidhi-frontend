@@ -6,10 +6,12 @@ import api from "../api.js";
 import NavBar from "./NavBar.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTotalPatients } from "../redux/patientSlice.js";
+import Loader1 from "./Loader1.jsx";
 
 export const Dashboard = () => {
   const [patients, setPatients] = useState([]);
   const [filter, setFilter] = useState("");
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
@@ -35,9 +37,9 @@ export const Dashboard = () => {
   const fetchPatients = async () => {
     setLoading(true);
     try {
-      const response = await api.get(`/patient?date_filter=${filter}`);
+      const response = await api.get(`/patient?date_filter=${filter}&search=${search}`);
       if (response.status === 200) {
-        const mappedData = response.data.map((item) => {
+        const mappedData = response.data.results.map((item) => {
           const utcDate = new Date(item.created_at);
           const istDate = new Date(
             utcDate.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
@@ -81,19 +83,7 @@ export const Dashboard = () => {
   ];
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-[#FDF5F5]">
-        <div className="flex flex-col justify-center items-center">
-          <div
-            className="w-10 h-10 border-4 border-t-4 border-[#FAE8E8] border-solid rounded-full animate-spin"
-            style={{ borderTopColor: "#D64545" }}
-          ></div>
-          <span className="mt-4 text-lg font-medium text-[#2D3436]">
-            Dr. NIDHI is analyzing...
-          </span>
-        </div>
-      </div>
-    );
+    return <Loader1 />
   }
 
   return (
@@ -171,9 +161,35 @@ export const Dashboard = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.6 }}
+        className="flex flex-col mb-2 p-1"
+        style={{ background: "#FFFFFF", border: "1px solid #FAE8E8" }}
+      >
+        {/* 
+        <label htmlFor="search" className="block text-sm font-medium text-text">
+          Search
+        </label> */}
+        <div className="mt-1">
+          <input
+            type="text"
+            id="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && fetchPatients()}
+            className="block w-full px-4 py-3 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
+            placeholder="Search (Name, Phone)"
+            required
+          />
+        </div>
+
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.6 }}
         className="shadow-md hover:shadow-lg overflow-hidden sm:rounded-lg transition duration-600"
         style={{ background: "#FFFFFF", border: "1px solid #FAE8E8" }}
       >
+
         <table
           className="min-w-full divide-y"
           style={{ borderColor: "#854141" }}
@@ -196,7 +212,7 @@ export const Dashboard = () => {
           <tbody style={{ background: "#FFFFFF", borderColor: "#854141" }}>
             {patients.map((patient) => (
               <motion.tr
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.01 }}
                 key={patient.id}
                 className="hover:bg-[#FAF2F2] transition duration-300"
                 style={{ borderBottom: "1px solid #FAE8E8" }}

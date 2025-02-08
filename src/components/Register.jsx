@@ -113,7 +113,15 @@ export const Register = () => {
                 navigate('/login')
             }
         } catch (error) {
-            setError(error.response?.data?.message || "An error occurred while registering");
+            const errorData = error.response?.data;
+            if (errorData && typeof errorData === 'object') {
+                const errorMessages = Object.entries(errorData)
+                    .map(([field, messages]) => `${field}: ${messages.join(" ")}`)
+                    .join(" | ");
+                setError(errorMessages);
+            } else {
+                setError("An error occurred while registering");
+            }
         } finally {
             setLoading(false)
         }
@@ -200,7 +208,7 @@ export const Register = () => {
                                 </label>
                                 <div className="mt-1">
                                     <input
-                                        type="text"
+                                        type="number"
                                         id="phoneNumber"
                                         value={phoneNumber}
                                         onChange={(e) => setPhoneNumber(e.target.value)}

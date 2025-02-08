@@ -16,11 +16,9 @@ function App() {
   const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
-    // If there is no authToken and no user, keep showing the splash screen.
-    if (!authToken && !user) {
+    if ((!authToken && !user) || (authToken && !user)) {
       setShowSplash(true);
     } else {
-      // Otherwise, hide the splash screen.
       setShowSplash(false);
     }
   }, [authToken, user]);
@@ -36,30 +34,37 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={
-            isAuthenticated ? (
-              <Dashboard />
-            ) : (
-              <LoginPage />
-            )
-          }
+          element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />}
         />
-        <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/login"
+          element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
+        />
+
+        <Route
+          path="/register"
+          element={isAuthenticated ? <Navigate to="/" replace /> : <Register />}
+        />
+
         <Route
           path="/patient/new"
-          element={isAuthenticated ? <PatientEntry /> : <Navigate to="/" />}
+          element={isAuthenticated ? <PatientEntry /> : <Navigate to="/login" replace />}
         />
+
         <Route
           path="/patients"
-          element={isAuthenticated ? <PatientList /> : <Navigate to="/" />}
+          element={isAuthenticated ? <PatientList /> : <Navigate to="/login" replace />}
         />
+
         <Route
           path="/status/:id"
-          element={isAuthenticated ? <StatusPage /> : <Navigate to="/" />}
+          element={isAuthenticated ? <StatusPage /> : <Navigate to="/login" replace />}
         />
+
         <Route
           path="/PatientHistory"
-          element={isAuthenticated ? <PatientHistory /> : <Navigate to="/" />}
+          element={isAuthenticated ? <PatientHistory /> : <Navigate to="/login" replace />}
         />
       </Routes>
     </BrowserRouter>
