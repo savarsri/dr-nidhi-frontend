@@ -26,6 +26,18 @@ const NavBar = () => {
         navigate("/login");
     };
 
+    const getGreeting = () => {
+        const now = new Date();
+        const istOffset = 5.5 * 60 * 60 * 1000; // Convert 5.5 hours to milliseconds
+        const istTime = new Date(now.getTime() + istOffset);
+        const hour = istTime.getUTCHours(); // Get the hour in IST
+
+        if (hour < 12) return "Good Morning";
+        if (hour < 18) return "Good Afternoon";
+        return "Good Evening";
+    };
+
+
     // If user exists, capitalize the first letter of the full name
     const fullName =
         user?.full_name && typeof user.full_name === "string"
@@ -51,7 +63,7 @@ const NavBar = () => {
                         </span>
                     </div>
                     <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xl font-bold text-text">
-                        {fullName ? `Good Morning, ${fullName}` : "Good Morning"}
+                        {fullName ? `${getGreeting()}, ${fullName}` : getGreeting()}
                     </h1>
                     <button
                         className="flex items-center text-accent hover:text-deeper transition duration-300"

@@ -27,6 +27,7 @@ export const Dashboard = () => {
   }, [dispatch, totalPatients, newPatientsThisMonth]);
 
   const filterMap = {
+    "All": "",
     "Today": "today",
     "Yesterday": "yesterday",
     "Last Week": "last_week",
@@ -95,7 +96,7 @@ export const Dashboard = () => {
     >
       <NavBar />
       {/* Tabs */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
@@ -118,15 +119,15 @@ export const Dashboard = () => {
             </motion.button>
           )
         )}
-      </motion.div>
+      </motion.div> */}
 
       {/* Stats */}
-      <div className="px-4 sm:px-6 lg:px-8">
+      <div className="px-4 sm:px-6 lg:px-8 mt-3">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex justify-between gap-6 mb-8"
+          className="flex justify-between gap-6 mb-4"
         >
           {stats.map((stat) => (
             <motion.div
@@ -161,7 +162,7 @@ export const Dashboard = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.6 }}
-        className="flex flex-col mb-2 p-1"
+        className="flex flex-row mb-2 py-1 justify-between px-5"
         style={{ background: "#FFFFFF", border: "1px solid #FAE8E8" }}
       >
         {/* 
@@ -180,7 +181,17 @@ export const Dashboard = () => {
             required
           />
         </div>
-
+        <select
+          value={filter}  // Corrected: Use filter directly
+          onChange={(e) => setFilter(e.target.value)}  // Corrected: Set filter directly
+          className="block px-4 py-3 mt-1 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
+        >
+          {Object.entries(filterMap).map(([label, value]) => (
+            <option key={label} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
       </motion.div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
