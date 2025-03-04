@@ -13,7 +13,7 @@ export const Register = () => {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [designation, setDesignation] = useState("");
+    const [medication, setMedication] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [loading, setLoading] = useState(false);
     const [showScreen, setShowScreen] = useState(0);
@@ -59,8 +59,8 @@ export const Register = () => {
             setError("Please enter phone number");
             return;
         }
-        if (!designation) {
-            setError("Please enter designation");
+        if (!medication) {
+            setError("Please enter medication");
             return;
         }
         setShowScreen(2);
@@ -82,8 +82,8 @@ export const Register = () => {
             setError("Please enter phone number");
             return;
         }
-        if (!designation) {
-            setError("Please enter designation");
+        if (!medication) {
+            setError("Please enter medication");
             return;
         }
         if (!password) {
@@ -104,12 +104,12 @@ export const Register = () => {
                 username,
                 full_name: name,
                 phone_number: phoneNumber,
-                designation,
+                medication,
                 password,
                 role: "doctor"
             });
 
-            if (response.status === 201) {
+            if (response.status === 201 || response.status === 200) {
                 navigate('/login')
             }
         } catch (error) {
@@ -219,19 +219,27 @@ export const Register = () => {
                                 </div>
                             </div>
                             <div>
-                                <label htmlFor="designation" className="block text-sm font-medium text-text">
-                                    Designation
-                                </label>
-                                <div className="mt-1">
-                                    <input
-                                        type="text"
-                                        id="designation"
-                                        value={designation}
-                                        onChange={(e) => setDesignation(e.target.value)}
-                                        className="block w-full px-4 py-3 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
-                                        placeholder="Enter Designation"
+                                <div>
+                                    <label
+                                        htmlFor="Medication"
+                                        className="block text-sm font-medium text-text"
+                                    >
+                                        Medication Type*
+                                    </label>
+                                    <select
                                         required
-                                    />
+                                        id="Medication"
+                                        className="block w-full px-4 py-3 mt-1 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
+                                        value={medication}
+                                        onChange={(e) =>
+                                            setMedication(e.target.value)
+                                        }
+                                    >
+                                        <option value="">Select medication type</option>
+                                        <option value="allopathy">Allopathy</option>
+                                        <option value="homeopathy">Homeopathy</option>
+                                        <option value="ayurveda">Ayurveda</option>
+                                    </select>
                                 </div>
                             </div>
                             <div className="w-full flex items-center justify-center gap-2">

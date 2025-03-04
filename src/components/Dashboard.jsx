@@ -162,7 +162,7 @@ export const Dashboard = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.6 }}
-        className="flex flex-row mb-2 py-1 justify-between px-5"
+        className="flex flex-row mb-2 py-1 justify-between px-5 mx-8 rounded-lg"
         style={{ background: "#FFFFFF", border: "1px solid #FAE8E8" }}
       >
         {/* 
@@ -197,7 +197,7 @@ export const Dashboard = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.6 }}
-        className="shadow-md hover:shadow-lg overflow-hidden sm:rounded-lg transition duration-600"
+        className="shadow-md hover:shadow-lg overflow-hidden sm:rounded-lg transition duration-600 mx-8"
         style={{ background: "#FFFFFF", border: "1px solid #FAE8E8" }}
       >
 

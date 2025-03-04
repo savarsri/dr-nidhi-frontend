@@ -28,6 +28,7 @@ const StatusPage = () => {
     "Treatment Plan & Recommendations",
     "Prognostic Insights",
     "Executive Summary",
+    "Attachments",
   ];
 
   // Function to toggle accordions and fetch data only if it's missing
@@ -51,6 +52,8 @@ const StatusPage = () => {
       setLoading(true);
       const response = await api.get(`/status/${id}`);
       if (response.status === 200) {
+        console.log(response.data);
+        
         setData(response.data);
         const modelOutput = response.data.model_output;
 
@@ -63,7 +66,7 @@ const StatusPage = () => {
             data: modelOutput[outputKey]
               ? mdParser.render(modelOutput[outputKey])
               : null,
-            isOpen: false,
+            isOpen: index === 0,
           };
         });
 

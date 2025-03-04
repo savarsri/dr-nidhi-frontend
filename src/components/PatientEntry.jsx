@@ -5,12 +5,47 @@ import api from '../api';
 import Loader1 from "./Loader1"
 import NavBar from './NavBar';
 
+const FILE_CATEGORIES = [
+  { value: "mri", label: "MRI Scan" },
+  { value: "ct_scan", label: "CT Scan" },
+  { value: "xray", label: "X-Ray" },
+  { value: "other", label: "Other" }
+];
+
 export const PatientEntry = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   // New state to track if patient data has been fetched from the API
   const [isFetched, setIsFetched] = useState(false);
+
+  const [fileInputs, setFileInputs] = useState([
+    { category: "", file: null }
+  ]);
+
+  const handleFileChange = (index, file) => {
+    const newInputs = [...fileInputs];
+    newInputs[index].file = file;
+    setFileInputs(newInputs);
+  };
+
+  const handleCategoryChange = (index, category) => {
+    const newInputs = [...fileInputs];
+    newInputs[index].category = category;
+    setFileInputs(newInputs);
+  };
+
+  const addFileRow = () => {
+    const lastInput = fileInputs[fileInputs.length - 1];
+
+    // Ensure last input is not empty
+    if (!lastInput.file || !lastInput.category) {
+      alert("Please select a category and upload a file before adding another.");
+      return;
+    }
+
+    setFileInputs([...fileInputs, { category: "", file: null }]);
+  };
 
   const [formData, setFormData] = useState(() => ({
     id: searchParams.get('id') || 0,
@@ -20,8 +55,6 @@ export const PatientEntry = () => {
     phone: searchParams.get('number') || '',
     majorsymptoms: '',
     medicalHistory: '',
-    attachments: [],
-    medication_type: ''
   }));
 
   useEffect(() => {
@@ -70,33 +103,61 @@ export const PatientEntry = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (
       !formData.id.trim() ||
       !formData.name.trim() ||
-      !formData.age.toString().trim() || // if age is a number, convert to string
+      !formData.age.toString().trim() || // Ensure age is treated as string
       !formData.gender.trim() ||
       !formData.phone.trim() ||
       !formData.majorsymptoms.trim()
     ) {
-      alert('Please fill in all required fields.');
+      alert("Please fill in all required fields.");
       return;
     }
 
-    console.log('Form submitted:', formData);
+    console.log("Form submitted:", formData);
+
     try {
       setLoading(true);
-      const response = await api.post('/generate', formData);
+
+      const formPayload = new FormData();
+
+      // Append text fields
+      formPayload.append("id", formData.id);
+      formPayload.append("name", formData.name);
+      formPayload.append("age", formData.age);
+      formPayload.append("gender", formData.gender);
+      formPayload.append("phone", formData.phone);
+      formPayload.append("majorsymptoms", formData.majorsymptoms);
+      formPayload.append("medicalHistory", formData.medicalHistory || "");
+      formPayload.append("medication_type", formData.medication_type || "");
+
+      // Append file attachments
+      fileInputs.forEach((fileData) => {
+        if (fileData.file && fileData.category) {
+          formPayload.append(fileData.category, fileData.file);
+        }
+      });
+
+      // Send request
+      const response = await api.post("/generate", formPayload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (response.status === 200) {
         console.log(response.data);
         navigate(`/status/${response.data.model_output_id}`);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error:", error);
     } finally {
       setLoading(false);
     }
   };
+
 
   if (loading) {
     return <Loader1 />
@@ -213,7 +274,7 @@ export const PatientEntry = () => {
                 />
               </div>
 
-              <div>
+              {/* <div>
                 <label
                   htmlFor="medication"
                   className="block text-sm font-medium text-text"
@@ -234,7 +295,7 @@ export const PatientEntry = () => {
                   <option value="homeopathy">Homeopathy</option>
                   <option value="ayurveda">Ayurveda</option>
                 </select>
-              </div>
+              </div> */}
             </div>
 
             {/* Major Symptoms */}
@@ -283,33 +344,46 @@ export const PatientEntry = () => {
             </div>
 
             {/* Attachments */}
-            <div className="mt-4">
-              <label
-                className="block text-sm font-medium"
-                style={{ color: '#2D3436' }}
-              >
-                Attachments
-              </label>
-              <input
-                type="file"
-                className="mt-1 block w-full rounded-md shadow-sm"
-                style={{
-                  border: '1px solid #854141',
-                  background: '#FFFFFF'
-                }}
-                onChange={(e) => {
-                  if (e.target.files) {
-                    setFormData({
-                      ...formData,
-                      attachments: Array.from(e.target.files)
-                    });
-                  }
-                }}
-                multiple
-              />
-              <p className="mt-1 text-sm" style={{ color: '#854141' }}>
-                You can upload multiple files.
-              </p>
+            <div className="mt-4 p-4 border rounded-md">
+              <label className="block text-sm font-medium text-gray-700">Attachments</label>
+
+              {fileInputs.map((input, index) => (
+                <div key={index} className="flex justify-between   items-center mt-2 space-x-2">
+                  {/* Category Selection */}
+                  <div>
+                    <select
+                      className="border p-2 rounded-md"
+                      value={input.category}
+                      onChange={(e) => handleCategoryChange(index, e.target.value)}
+                    >
+                      <option value="">Select Category</option>
+                      {FILE_CATEGORIES.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* File Input */}
+                    <input
+                      type="file"
+                      className="border p-2 rounded-md"
+                      onChange={(e) => handleFileChange(index, e.target.files[0])}
+                    />
+                  </div>
+
+                  {/* Add More Button */}
+                  {index === fileInputs.length - 1 && (
+                    <button
+                      type="button"
+                      className="p-2 px-2 bg-[#D64545] text-white rounded-md"
+                      onClick={addFileRow}
+                    >
+                      +
+                    </button>
+                  )}
+                </div>
+              ))}
             </div>
 
             {/* Submit Button */}
