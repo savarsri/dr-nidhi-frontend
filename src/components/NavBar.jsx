@@ -57,10 +57,12 @@ const NavBar = () => {
                                 <ArrowLeft className="w-6 h-6" />
                             </button>
                         )}
-                        <Layout className="w-6 h-6 text-primary" />
-                        <span className="ml-2 text-xl font-semibold text-text">
-                            Dr. Nidhi
-                        </span>
+                        <div className="flex items-center cursor-pointer" onClick={() => navigate("/")}>
+                            <Layout className="w-6 h-6 text-primary" />
+                            <span className="ml-2 text-xl font-semibold text-text">
+                                Dr. Nidhi
+                            </span>
+                        </div>
                     </div>
                     <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xl font-bold text-text">
                         {fullName ? `${getGreeting()}, ${fullName}` : getGreeting()}
