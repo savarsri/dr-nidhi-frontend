@@ -5,6 +5,7 @@ import MarkdownIt from "markdown-it";
 import NavBar from "./NavBar";
 import Accordion from "./Accordion";
 import Loader1 from "./Loader1";
+import { toast, ToastContainer } from "react-toastify";
 
 const mdParser = new MarkdownIt({
   html: true,
@@ -105,7 +106,7 @@ const StatusPage = () => {
 
   // Fire update function only once per key
   async function updatePromptOutput(promptId) {
-    if (updating[promptId]) return; // Prevent duplicate calls
+    if (updating[promptId]) return;
 
     setUpdating((prev) => ({ ...prev, [promptId]: true }));
 
@@ -116,7 +117,9 @@ const StatusPage = () => {
       });
 
       if (response.status === 200) {
-        fetchData(id); // Refetch the data after successful update
+        console.log(response.data);
+        
+        // fetchData(id);
       }
     } catch (error) {
       console.error("Error updating prompt output:", error);
@@ -133,7 +136,7 @@ const StatusPage = () => {
 
   const handleSubmit = async () => {
     if (!selectedRating) {
-      alert("Please select a rating!");
+      toast.warn("Please select a rating");
       return;
     }
 
@@ -141,19 +144,19 @@ const StatusPage = () => {
       const response = await api.post("/doctor-remark", {
         output_id: id,
         remark: selectedRating,
-        comment: comment.trim(),
+        comment: comment?.trim() || "",
       });
 
       if (response.status === 200) {
-        alert("Remark submitted successfully!");
+        toast.success("Remark submitted successfully!");
         setSelectedRating(null);
         setComment("");
       } else {
-        alert("Failed to submit remark!");
+        toast.error("Failed to submit remark!");
       }
     } catch (error) {
       console.error("Error submitting remark:", error);
-      alert("An error occurred while submitting the remark.");
+      toast.error("An error occurred while submitting the remark.");
     }
   };
 
@@ -164,6 +167,7 @@ const StatusPage = () => {
   return (
     <div>
       <NavBar />
+      <ToastContainer />
       <div className="bg-[#FDF5F5] text-[#2D3436] p-5 font-sans">
         <h1 className="text-xl font-bold mb-5">Patient Status</h1>
         {/* Patient Data Section */}
