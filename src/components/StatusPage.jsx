@@ -28,6 +28,7 @@ const StatusPage = () => {
   const [accordions, setAccordion] = useState([]);
   const [visits, setVisits] = useState([]);
   const [updating, setUpdating] = useState({});
+  const [globalUpdating, setGlobalUpdating] = useState(false);
   const [selectedRating, setSelectedRating] = useState("");
   const [comment, setComment] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -106,8 +107,11 @@ const StatusPage = () => {
 
   // Fire update function only once per key
   async function updatePromptOutput(promptId) {
+    if (globalUpdating) return;
+
     if (updating[promptId]) return;
 
+    setGlobalUpdating(true)
     setUpdating((prev) => ({ ...prev, [promptId]: true }));
 
     try {
@@ -120,10 +124,12 @@ const StatusPage = () => {
         console.log(response.data);
         
         // fetchData(id);
+        setGlobalUpdating(false)
       }
     } catch (error) {
       console.error("Error updating prompt output:", error);
     } finally {
+      setGlobalUpdating(false)
       setUpdating((prev) => ({ ...prev, [promptId]: false }));
     }
   }
