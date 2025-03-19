@@ -44,13 +44,15 @@ const StatusPage = () => {
 
   // Static titles for accordions
   const accordionTitles = [
-    "Comprehensive Diagnosis",
+    "Initial Diagnosis",
+    "Primary Diagnosis",
+    "Organ Impact",  
+    "Executive Summary",
     "Clinical Analysis",
     "Urgent Alerts",
     "Recommended Actions",
     "Treatment Plan & Recommendations",
     "Prognostic Insights",
-    "Executive Summary",
     "Attachments",
   ];
 
@@ -108,31 +110,38 @@ const StatusPage = () => {
   // Fire update function only once per key
   async function updatePromptOutput(promptId) {
     if (globalUpdating) return;
-
     if (updating[promptId]) return;
 
-    setGlobalUpdating(true)
+    setGlobalUpdating(true);
     setUpdating((prev) => ({ ...prev, [promptId]: true }));
 
     try {
       const response = await api.put(`/generate`, {
         prompt_id: promptId,
-        output_id: id
+        output_id: id,
       });
 
       if (response.status === 200) {
-        console.log(response.data);
-        
-        // fetchData(id);
-        setGlobalUpdating(false)
+        // Assume response.data.updatedText holds the new output for the accordion.
+        const updatedText = response.data.updatedText;
+
+        // Update only the specific accordion.
+        setAccordion((prevAccordions) =>
+          prevAccordions.map((acc) =>
+            acc.key === promptId
+              ? { ...acc, data: mdParser.render(String(updatedText)) }
+              : acc
+          )
+        );
       }
     } catch (error) {
       console.error("Error updating prompt output:", error);
     } finally {
-      setGlobalUpdating(false)
+      setGlobalUpdating(false);
       setUpdating((prev) => ({ ...prev, [promptId]: false }));
     }
   }
+
 
   useEffect(() => {
     if (id) {
@@ -307,22 +316,22 @@ const StatusPage = () => {
                   {
                     parameter: "NH3 (Ammonia)",
                     value: data.sensor_data.nh3 || "-",
-                    range: "15-45 ppm",
+                    range: "0.1-2 ppm",
                   },
                   {
                     parameter: "CO (Carbon Monoxide)",
                     value: data.sensor_data.co || "-",
-                    range: "<9 ppm",
+                    range: "0.1-10 ppm",
                   },
                   {
                     parameter: "O2 (Oxygen Level)",
                     value: data.sensor_data.o2 || "-",
-                    range: "75-100 %Vol",
+                    range: "13-18 %",
                   },
                   {
                     parameter: "CO2 (Carbon Dioxide)",
                     value: data.sensor_data.co2 || "-",
-                    range: "20,000-30,000 ppm",
+                    range: "20,000-50,000 ppm",
                   },
                   {
                     parameter: "SpO2",
@@ -338,6 +347,11 @@ const StatusPage = () => {
                     parameter: "RQ",
                     value: data.sensor_data.rq || "-",
                     range: "0.7 - 1.0",
+                  },
+                  {
+                    parameter: "Hydrogen (H2)",
+                    value: data.sensor_data?.hydrogen || "-",
+                    range: "0.1-16 ppm",
                   },
                 ].map((row, index) => (
                   <tr
@@ -396,6 +410,11 @@ const StatusPage = () => {
           >
             Submit
           </button>
+        </div>
+        <div className="mt-8 p-4 border-t border-gray-300 text-center">
+          <p className="text-md text-gray-600">
+            <strong>Disclaimer:</strong> AI-generated advice is <strong>not a substitute for professional medical judgment</strong>. Consult other healthcare providers before initiating or changing any treatment.
+          </p>
         </div>
       </div>
       {isModalOpen && (
