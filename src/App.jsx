@@ -8,6 +8,7 @@ import { PatientList } from "./components/PatientList";
 import { Register } from "./components/Register";
 import StatusPage from "./components/StatusPage";
 import PatientHistory from "./components/PatientHistory";
+import DeviceRegister from "./components/DeviceRegister"
 import { useSelector } from "react-redux";
 
 function App() {
@@ -65,6 +66,11 @@ function App() {
         <Route
           path="/PatientHistory"
           element={isAuthenticated ? <PatientHistory /> : <Navigate to="/login" replace />}
+        />
+
+        <Route
+          path="/device-register"
+          element={isAuthenticated ? <DeviceRegister /> : <Navigate to="/login" replace />}
         />
       </Routes>
     </BrowserRouter>

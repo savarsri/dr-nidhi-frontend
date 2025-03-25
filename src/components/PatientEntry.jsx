@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { replace, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api';
 import Loader1 from "./Loader1"
 import NavBar from './NavBar';
@@ -57,31 +57,60 @@ export const PatientEntry = () => {
     medicalHistory: '',
   }));
 
+  async function fetchData() {
+    setLoading(true);
+    try {
+      const response = await api.get(`/patient/${formData.phone}`);
+      if (response.status === 200) {
+        const data = response.data;
+        setFormData((prev) => ({
+          ...prev,
+          name: data.name || '',
+          age: data.age || '',
+          gender: data.gender || ''
+        }));
+        // Mark that patient data has been fetched so fetched fields can be disabled
+        setIsFetched(true);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function checkOutput() {
+    setLoading(true);
+    try {
+      const response = await api.get(`/output/${formData.id}`);
+      if (response.status === 200) {
+        console.log("helo");
+        
+        navigate('/', replace)
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-    async function fetchData() {
+    async function checkAndFetch() {
       setLoading(true);
       try {
-        const response = await api.get(`/patient/${formData.phone}`);
-        if (response.status === 200) {
-          const data = response.data;
-          setFormData((prev) => ({
-            ...prev,
-            name: data.name || '',
-            age: data.age || '',
-            gender: data.gender || ''
-          }));
-          // Mark that patient data has been fetched so fetched fields can be disabled
-          setIsFetched(true);
-        }
+        await checkOutput();
+        await fetchData();
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchData();
+    checkAndFetch();
   }, [searchParams]);
+
 
   useEffect(() => {
     if (!formData.phone) {

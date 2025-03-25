@@ -33,6 +33,12 @@ export const setupInterceptors = (store) => {
     (error) => {
       const originalRequest = error.config;
 
+      // Handle 460 - Device not registered
+      if (error.response && error.response.status === 460) {
+        window.location.href = '/device-register';
+        return Promise.reject(error);
+      }
+
       if (error.response && error.response.status === 401 && !originalRequest._retry) {
         if (isRefreshing) {
           return new Promise((resolve, reject) => {

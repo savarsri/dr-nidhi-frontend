@@ -95,31 +95,6 @@ export const Dashboard = () => {
       className="min-h-screen bg-background"
     >
       <NavBar />
-      {/* Tabs */}
-      {/* <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="flex gap-3 my-5 justify-center"
-      >
-        {["Today", "Yesterday", "Last Week", "Last Month", "Old/Archive"].map(
-          (tab) => (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              key={tab}
-              onClick={() => {
-                const filterValue = filterMap[tab];
-                setFilter(filterValue);
-                return;
-              }}
-              className="bg-[#FAE8E8] text-[#2D3436] border border-[#854141] rounded px-3 py-1 shadow-md hover:shadow-lg hover:bg-[#F4DADA] transition duration-600"
-            >
-              {tab}
-            </motion.button>
-          )
-        )}
-      </motion.div> */}
 
       {/* Stats */}
       <div className="px-4 sm:px-6 lg:px-8 mt-3">
@@ -181,17 +156,25 @@ export const Dashboard = () => {
             required
           />
         </div>
-        <select
-          value={filter}  // Corrected: Use filter directly
-          onChange={(e) => setFilter(e.target.value)}  // Corrected: Set filter directly
-          className="block px-4 py-3 mt-1 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
-        >
-          {Object.entries(filterMap).map(([label, value]) => (
-            <option key={label} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={fetchPatients}
+            className="mt-1 px-6 py-3 bg-primary text-white font-semibold rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-all"
+          >
+            Refresh
+          </button>
+          <select
+            value={filter}  // Corrected: Use filter directly
+            onChange={(e) => setFilter(e.target.value)}  // Corrected: Set filter directly
+            className="block px-4 py-3 mt-1 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
+          >
+            {Object.entries(filterMap).map(([label, value]) => (
+              <option key={label} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
       </motion.div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -221,43 +204,54 @@ export const Dashboard = () => {
             </tr>
           </thead>
           <tbody style={{ background: "#FFFFFF", borderColor: "#854141" }}>
-            {patients.map((patient) => (
-              <motion.tr
-                whileHover={{ scale: 1.01 }}
-                key={patient.id}
-                className="hover:bg-[#FAF2F2] transition duration-300"
-                style={{ borderBottom: "1px solid #FAE8E8" }}
-              >
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {patient.model_output_id ? (
-                    <Link to={`/status/${patient.model_output_id}`}>
-                      {patient.patient_name || "New Patient"}
-                    </Link>
-                  ) : (
-                    <Link
-                      to={`/patient/new?id=${patient.id}&number=${patient.patient_mobile_number}`}
-                    >
-                      {patient.patient_name || "New Patient"}
-                    </Link>
-                  )}
+            {patients.length > 0 ? (
+              patients.map((patient) => (
+                <motion.tr
+                  whileHover={{ scale: 1.01 }}
+                  key={patient.id}
+                  className="hover:bg-[#FAF2F2] transition duration-300"
+                  style={{ borderBottom: "1px solid #FAE8E8" }}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {patient.model_output_id ? (
+                      <Link to={`/status/${patient.model_output_id}`}>
+                        {patient.patient_name || "New Patient"}
+                      </Link>
+                    ) : (
+                      <Link
+                        to={`/patient/new?id=${patient.id}&number=${patient.patient_mobile_number}`}
+                      >
+                        {patient.patient_name || "New Patient"}
+                      </Link>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
+                    {patient.patient_age}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
+                    {patient.patient_gender}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
+                    {patient.patient_mobile_number}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
+                    {patient.date}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
+                    {patient.time}
+                  </td>
+                </motion.tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan="6"
+                  className="px-6 py-4 text-center text-sm font-medium text-gray-500"
+                >
+                  No patient data to display
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
-                  {patient.patient_age}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
-                  {patient.patient_gender}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
-                  {patient.patient_mobile_number}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
-                  {patient.date}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2D3436]">
-                  {patient.time}
-                </td>
-              </motion.tr>
-            ))}
+              </tr>
+            )}
           </tbody>
         </table>
       </motion.div>
