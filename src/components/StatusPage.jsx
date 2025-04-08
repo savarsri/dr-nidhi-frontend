@@ -46,7 +46,7 @@ const StatusPage = () => {
   const accordionTitles = [
     "Initial Diagnosis",
     "Primary Diagnosis",
-    "Organ Impact",  
+    "Organ Impact",
     "Executive Summary",
     "Clinical Analysis",
     "Urgent Alerts",
@@ -80,9 +80,9 @@ const StatusPage = () => {
         console.log(response.data);
 
         setData(response.data);
-        setComment(response.data.model_output?.doctor_comment)
-        setSelectedRating(response.data.model_output?.doctor_remark)
-        setVisits(response.data?.previous_visits)
+        setComment(response.data.model_output?.doctor_comment);
+        setSelectedRating(response.data.model_output?.doctor_remark);
+        setVisits(response.data?.previous_visits);
         const modelOutput = response.data.model_output;
 
         // Create accordion items with dynamic data
@@ -142,7 +142,6 @@ const StatusPage = () => {
     }
   }
 
-
   useEffect(() => {
     if (id) {
       fetchData(id);
@@ -184,47 +183,59 @@ const StatusPage = () => {
       <NavBar />
       <ToastContainer />
       <div className="bg-[#FDF5F5] text-[#2D3436] p-5 font-sans">
-        <h1 className="text-xl font-bold mb-5">Patient Status</h1>
+        <h1 className="text-xl font-bold mb-5 text-center md:text-left">Patient Status</h1>
         {/* Patient Data Section */}
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 mb-5">
           {/* Patient Card */}
           <div className="bg-[#F8EAEA] shadow-lg rounded-xl p-8 border border-[#854141] flex flex-col gap-6">
             {/* Header */}
-            <div className="flex items-center gap-6">
+            <div className="flex flex-col sm:flex-row items-center gap-6">
               {/* Avatar */}
               <div className="bg-[#B83232] text-white w-24 h-24 flex items-center justify-center text-4xl font-bold rounded-full">
                 {data?.patient_data?.name.charAt(0).toUpperCase()}
               </div>
 
               {/* Name & Contact */}
-              <div>
+              <div className="text-center sm:text-left">
                 <h2 className="text-2xl font-bold text-[#2D3436]">{data?.patient_data?.name}</h2>
                 <p className="text-lg text-gray-700">📞 {data?.patient_data?.patient_mobile_number}</p>
               </div>
             </div>
 
             {/* Patient Details */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Age & Gender */}
               <div>
-                <p className="text-lg text-gray-700 capitalize">⚥ <span className="font-semibold">Gender:</span> {data?.patient_data?.gender}</p>
-                <p className="text-lg text-gray-700">🧑 <span className="font-semibold">Age:</span> {data?.patient_data?.age}</p>
+                <p className="text-lg text-gray-700 capitalize">
+                  ⚥ <span className="font-semibold">Gender:</span> {data?.patient_data?.gender}
+                </p>
+                <p className="text-lg text-gray-700">
+                  🧑 <span className="font-semibold">Age:</span> {data?.patient_data?.age}
+                </p>
               </div>
 
-              {/* Divider */}
-              <div className="border-l border-[#854141] pl-6">
-                <p className="text-lg text-gray-700">💓 <span className="font-semibold">Heart Rate:</span> {`${data?.sensor_data?.heart_rate} BPM` || "- BPM"}</p>
-                <p className="text-lg text-gray-700">🫁 <span className="font-semibold">O₂ Level:</span> {data?.sensor_data?.spo2 || "-"} %</p>
+              {/* Heart Rate & O₂ Level */}
+              <div className="pl-0 sm:border-l sm:pl-6 border-[#854141]">
+                <p className="text-lg text-gray-700">
+                  💓 <span className="font-semibold">Heart Rate:</span> {`${data?.sensor_data?.heart_rate} BPM` || "- BPM"}
+                </p>
+                <p className="text-lg text-gray-700">
+                  🫁 <span className="font-semibold">O₂ Level:</span> {data?.sensor_data?.spo2 || "-"} %
+                </p>
               </div>
 
               {/* Symptoms */}
-              <div className="col-span-2">
-                <p className="text-lg text-gray-700"><span className="font-semibold">🩺 Symptoms:</span> {data?.model_output?.symptoms || "No symptoms recorded"}</p>
+              <div className="col-span-1 sm:col-span-2">
+                <p className="text-lg text-gray-700">
+                  <span className="font-semibold">🩺 Symptoms:</span> {data?.model_output?.symptoms || "No symptoms recorded"}
+                </p>
               </div>
 
               {/* History */}
-              <div className="col-span-2">
-                <p className="text-lg text-gray-700"><span className="font-semibold">📜 History:</span> {data?.model_output?.history || "No prior issues"}</p>
+              <div className="col-span-1 sm:col-span-2">
+                <p className="text-lg text-gray-700">
+                  <span className="font-semibold">📜 History:</span> {data?.model_output?.history || "No prior issues"}
+                </p>
               </div>
             </div>
           </div>
@@ -265,7 +276,6 @@ const StatusPage = () => {
                   })
                   : "No previous visits"}
               </p>
-
             </div>
 
             {/* History Button */}
@@ -279,8 +289,6 @@ const StatusPage = () => {
             </div>
           </div>
         </div>
-
-
 
         <div>
           {accordions.map((accordion) => (
@@ -302,7 +310,7 @@ const StatusPage = () => {
 
         {/* Table Section */}
         {data && (
-          <div className="my-5">
+          <div className="my-5 overflow-x-auto">
             <table className="w-full border-collapse">
               <thead className="bg-[#854141] text-white">
                 <tr>
@@ -380,12 +388,12 @@ const StatusPage = () => {
             Doctor's Remark [Please share your view about the above Diagnosis
             and Recommendation]
           </h4>
-          <div className="flex gap-3 mb-3 justify-center">
+          <div className="flex flex-wrap gap-3 mb-3 justify-center">
             {ratings.map(({ label, emoji }) => (
               <button
                 key={label}
                 className={`py-3 px-6 rounded-full shadow-md text-md font-semibold transition-all duration-200
-        ${selectedRating === label
+                  ${selectedRating === label
                     ? "bg-[#B83232] text-white border-2 border-white ring-2 ring-[#D64545] shadow-lg"
                     : "bg-[#FA9999] text-black border border-gray-400 hover:bg-[#B83232] hover:text-white"
                   }`}
@@ -418,25 +426,27 @@ const StatusPage = () => {
         </div>
       </div>
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2">
-            <h2 className="text-xl font-bold mb-4 text-[#B83232]">Patient Visit History</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full sm:w-11/12 md:w-2/3 lg:w-1/2 max-w-sm md:max-w-lg lg:max-w-xl">
+            <h2 className="text-lg sm:text-xl font-bold mb-4 text-[#B83232] text-center">
+              Patient Visit History
+            </h2>
 
             {/* Visit List */}
-            <div className="max-h-64 overflow-y-auto">
+            <div className="max-h-80 sm:max-h-96 overflow-y-auto">
               {visits?.length > 0 ? (
                 <ul className="space-y-3">
                   {visits.map((visit, index) => (
                     <li
                       key={index}
-                      className="p-3 bg-gray-100 rounded-lg flex justify-between items-center cursor-pointer hover:bg-gray-200 transition"
+                      className="ml-0 p-3 bg-gray-100 rounded-lg flex flex-col sm:flex-row sm:justify-between items-start sm:items-center cursor-pointer hover:bg-gray-200 transition"
                       onClick={() => {
                         setIsModalOpen(false);
                         navigate(`/status/${visit.id}`);
                       }}
                     >
                       {/* Date */}
-                      <span>
+                      <span className="text-sm sm:text-base">
                         🗓️ {new Date(visit.created_at).toLocaleString("en-IN", {
                           day: "2-digit",
                           month: "2-digit",
@@ -449,19 +459,19 @@ const StatusPage = () => {
                       </span>
 
                       {/* Doctor's Remark */}
-                      <span className="text-gray-700 text-sm font-semibold">
+                      <span className="text-gray-700 text-sm font-semibold mt-2 sm:mt-0">
                         🩺 Doctor's Remark: {visit.doctor_remark || "No remark"}
                       </span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-gray-500">No previous visits available.</p>
+                <p className="text-gray-500 text-center">No previous visits available.</p>
               )}
             </div>
 
             {/* Buttons */}
-            <div className="flex justify-end gap-4 mt-5">
+            <div className="flex justify-center sm:justify-end gap-4 mt-5">
               <button
                 className="bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
                 onClick={toggleModal}
