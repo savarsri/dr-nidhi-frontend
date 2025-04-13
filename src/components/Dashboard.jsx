@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Users, UserPlus } from "lucide-react";
+import { Users, UserPlus, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import api from "../api.js";
@@ -117,6 +117,17 @@ export const Dashboard = () => {
           className="p-2 border rounded-lg w-full md:w-1/2"
           placeholder="Search (Name, Phone)"
         />
+        <button
+          className="flex items-center px-4 py-2 rounded-md shadow-sm"
+          style={{
+            background: '#D64545',
+            color: '#FFFFFF',
+            border: 'none'
+          }}
+          onClick={() => fetchPatients()}
+        >
+          <Search className="w-5 h-5" />
+        </button>
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
