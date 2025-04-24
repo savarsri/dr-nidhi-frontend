@@ -18,6 +18,7 @@ export const PatientEntry = () => {
   const [loading, setLoading] = useState(false);
   // New state to track if patient data has been fetched from the API
   const [isFetched, setIsFetched] = useState(false);
+  const [showAttachments, setShowAttachments] = useState(true);
 
   const [fileInputs, setFileInputs] = useState([
     { category: "", file: null }
@@ -55,6 +56,7 @@ export const PatientEntry = () => {
     phone: searchParams.get('number') || '',
     majorsymptoms: '',
     medicalHistory: '',
+    notes: '',
   }));
 
   async function fetchData() {
@@ -138,8 +140,7 @@ export const PatientEntry = () => {
       !formData.name.trim() ||
       !formData.age.toString().trim() || // Ensure age is treated as string
       !formData.gender.trim() ||
-      !formData.phone.trim() ||
-      !formData.majorsymptoms.trim()
+      !formData.phone.trim()
     ) {
       alert("Please fill in all required fields.");
       return;
@@ -161,6 +162,7 @@ export const PatientEntry = () => {
       formPayload.append("majorsymptoms", formData.majorsymptoms);
       formPayload.append("medicalHistory", formData.medicalHistory || "");
       formPayload.append("medication_type", formData.medication_type || "");
+      formPayload.append("medication_type", formData.notes || "");
 
       // Append file attachments
       fileInputs.forEach((fileData) => {
@@ -334,7 +336,7 @@ export const PatientEntry = () => {
                 className="block text-sm font-medium"
                 style={{ color: '#2D3436' }}
               >
-                Major Symptoms*
+                Major Symptoms
               </label>
               <textarea
                 rows={3}
@@ -347,7 +349,6 @@ export const PatientEntry = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, majorsymptoms: e.target.value })
                 }
-                required
               />
             </div>
 
@@ -373,47 +374,78 @@ export const PatientEntry = () => {
               />
             </div>
 
+            <div>
+              <label
+                className="block text-sm font-medium"
+                style={{ color: '#2D3436' }}
+              >
+                Your Notes
+              </label>
+              <textarea
+                rows={4}
+                className="mt-1 block w-full rounded-md shadow-sm"
+                style={{
+                  border: '1px solid #854141',
+                  background: '#FFFFFF'
+                }}
+                value={formData.medicalHistory}
+                onChange={(e) =>
+                  setFormData({ ...formData, medicalHistory: e.target.value })
+                }
+              />
+            </div>
+
             {/* Attachments */}
             <div className="mt-4 p-4 border rounded-md">
-              <label className="block text-sm font-medium text-gray-700">Attachments</label>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">Attachments</label>
+                <button
+                  type="button"
+                  onClick={() => setShowAttachments(!showAttachments)}
+                  className="text-sm hover:underline flex items-center space-x-1"
+                >
+                  <span>{showAttachments ? '▲' : '▼'}</span>
+                </button>
+              </div>
 
-              {fileInputs.map((input, index) => (
-                <div key={index} className="flex justify-between   items-center mt-2 space-x-2">
-                  {/* Category Selection */}
-                  <div>
-                    <select
-                      className="border p-2 rounded-md"
-                      value={input.category}
-                      onChange={(e) => handleCategoryChange(index, e.target.value)}
-                    >
-                      <option value="">Select Category</option>
-                      {FILE_CATEGORIES.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+              {showAttachments &&
+                fileInputs.map((input, index) => (
+                  <div key={index} className="flex justify-between items-center mt-2 space-x-2">
+                    {/* Category Selection */}
+                    <div>
+                      <select
+                        className="border p-2 rounded-md"
+                        value={input.category}
+                        onChange={(e) => handleCategoryChange(index, e.target.value)}
+                      >
+                        <option value="">Select Category</option>
+                        {FILE_CATEGORIES.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
 
-                    {/* File Input */}
-                    <input
-                      type="file"
-                      className="border p-2 rounded-md"
-                      onChange={(e) => handleFileChange(index, e.target.files[0])}
-                    />
+                      {/* File Input */}
+                      <input
+                        type="file"
+                        className="border p-2 rounded-md mt-2"
+                        onChange={(e) => handleFileChange(index, e.target.files[0])}
+                      />
+                    </div>
+
+                    {/* Add More Button */}
+                    {index === fileInputs.length - 1 && (
+                      <button
+                        type="button"
+                        className="p-2 px-2 bg-[#D64545] text-white rounded-md"
+                        onClick={addFileRow}
+                      >
+                        +
+                      </button>
+                    )}
                   </div>
-
-                  {/* Add More Button */}
-                  {index === fileInputs.length - 1 && (
-                    <button
-                      type="button"
-                      className="p-2 px-2 bg-[#D64545] text-white rounded-md"
-                      onClick={addFileRow}
-                    >
-                      +
-                    </button>
-                  )}
-                </div>
-              ))}
+                ))}
             </div>
 
             {/* Submit Button */}
