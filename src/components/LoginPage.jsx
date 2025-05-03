@@ -48,8 +48,14 @@ export const LoginPage = () => {
         localStorage.setItem('authToken', response.data.access);
         localStorage.setItem('refreshToken', response.data.refresh);
         try {
-          await dispatch(fetchUser()).unwrap();
-          navigate("/");
+          const user = await dispatch(fetchUser()).unwrap(); // Assuming it returns the user
+
+          // Redirect based on role
+          if (user.role === "admin") {
+            navigate("/admindashboard");
+          } else {
+            navigate("/");
+          }
         } catch (error) {
           console.error("Failed to fetch user", error);
           localStorage.removeItem('authToken');
@@ -58,6 +64,7 @@ export const LoginPage = () => {
         }
       } else {
         setError("Invalid username or password. Please try again.");
+        setLoading(false);
       }
     } catch (err) {
       setError(err.response?.data?.detail || "An unexpected error occurred.");

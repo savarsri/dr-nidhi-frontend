@@ -9,7 +9,10 @@ import { Register } from "./components/Register";
 import StatusPage from "./components/StatusPage";
 import PatientHistory from "./components/PatientHistory";
 import DeviceRegister from "./components/DeviceRegister"
+import ProtectedRoute from "./components/ProtectedRoute";
 import { useSelector } from "react-redux";
+import EmailVerification from "./components/EmailVerification";
+import AdminDashboard from "./components/AdminDashboard";
 
 function App() {
   const authToken = localStorage.getItem("authToken");
@@ -35,7 +38,11 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />}
+          element={
+            <ProtectedRoute allowedRoles={["doctor", "admin"]}>
+              <Dashboard />
+            </ProtectedRoute>
+          }
         />
 
         <Route
@@ -49,28 +56,66 @@ function App() {
         />
 
         <Route
+          path="/verify-email"
+          element={isAuthenticated ? <EmailVerification /> : <Navigate to="/login" replace />}
+        />
+
+        <Route
+          path="/verify-email/:uidb64/:token"
+          element={<EmailVerification />}
+        />
+
+        <Route
+          path="/admindashboard"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/patient/new"
-          element={isAuthenticated ? <PatientEntry /> : <Navigate to="/login" replace />}
+          element={
+            <ProtectedRoute allowedRoles={["doctor", "admin"]}>
+              <PatientEntry />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/patients"
-          element={isAuthenticated ? <PatientList /> : <Navigate to="/login" replace />}
+          element={
+            <ProtectedRoute allowedRoles={["doctor", "admin"]}>
+              <PatientList />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/status/:id"
-          element={isAuthenticated ? <StatusPage /> : <Navigate to="/login" replace />}
+          element={
+            <ProtectedRoute allowedRoles={["doctor", "admin"]}>
+              <StatusPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/PatientHistory"
-          element={isAuthenticated ? <PatientHistory /> : <Navigate to="/login" replace />}
+          element={
+            <ProtectedRoute allowedRoles={["doctor", "admin"]}>
+              <PatientHistory />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/device-register"
-          element={isAuthenticated ? <DeviceRegister /> : <Navigate to="/login" replace />}
+          element={
+            <ProtectedRoute allowedRoles={["doctor", "admin"]}>
+              <DeviceRegister />
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </BrowserRouter>

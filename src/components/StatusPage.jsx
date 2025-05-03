@@ -324,12 +324,12 @@ const StatusPage = () => {
                   {
                     parameter: "NH3 (Ammonia)",
                     value: data.sensor_data.nh3 || "-",
-                    range: "0.1-2 ppm",
+                    range: "0.0-2 ppm",
                   },
                   {
                     parameter: "CO (Carbon Monoxide)",
                     value: data.sensor_data.co || "-",
-                    range: "0.1-10 ppm",
+                    range: "0.0-10 ppm",
                   },
                   {
                     parameter: "O2 (Oxygen Level)",
@@ -359,7 +359,12 @@ const StatusPage = () => {
                   {
                     parameter: "Hydrogen (H2)",
                     value: data.sensor_data?.hydrogen || "-",
-                    range: "0.1-16 ppm",
+                    range: "0.0-16 ppm",
+                  },
+                  {
+                    parameter: "Formaldehyde",
+                    value: data.sensor_data?.formaldehyde || "-",
+                    range: "0.0-16 ppm",
                   },
                 ].map((row, index) => (
                   <tr

@@ -27,6 +27,14 @@ const NavBar = () => {
         return "Good Evening";
     };
 
+    const handleNavigation = () => {
+        if (user?.role === "admin") {
+            navigate("/admindashboard");
+        } else {
+            navigate("/");
+        }
+    };
+
     const fullName =
         user?.full_name && typeof user.full_name === "string"
             ? user.full_name.charAt(0).toUpperCase() + user.full_name.slice(1)
@@ -45,7 +53,7 @@ const NavBar = () => {
                                 <ArrowLeft className="w-6 h-6" />
                             </button>
                         )}
-                        <div className="flex items-center cursor-pointer" onClick={() => navigate("/")}>
+                        <div className="flex items-center cursor-pointer" onClick={handleNavigation}>
                             <Layout className="w-6 h-6 text-primary" />
                             <span className="ml-2 text-lg sm:text-xl font-semibold text-text">
                                 Dr. Nidhi

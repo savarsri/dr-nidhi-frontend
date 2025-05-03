@@ -10,6 +10,7 @@ export const Register = () => {
     const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -37,6 +38,10 @@ export const Register = () => {
             setError("Please enter username");
             return;
         }
+        if (!email) {
+            setError("Please enter email");
+            return;
+        }
         if (!name) {
             setError("Please enter your name");
             return;
@@ -49,6 +54,10 @@ export const Register = () => {
         e.preventDefault();
         if (!username) {
             setError("Please enter username");
+            return;
+        }
+        if (!email) {
+            setError("Please enter email");
             return;
         }
         if (!name) {
@@ -72,6 +81,10 @@ export const Register = () => {
         e.preventDefault();
         if (!username) {
             setError("Please enter username");
+            return;
+        }
+        if (!email) {
+            setError("Please enter email");
             return;
         }
         if (!name) {
@@ -102,6 +115,7 @@ export const Register = () => {
         try {
             const response = await api.post("/user", {
                 username,
+                email,
                 full_name: name,
                 phone_number: phoneNumber,
                 medication,
@@ -171,6 +185,23 @@ export const Register = () => {
                                         onChange={(e) => setUsername(e.target.value)}
                                         className="block w-full px-4 py-3 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
                                         placeholder="Enter username"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-medium text-text">
+                                    Email
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="block w-full px-4 py-3 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
+                                        placeholder="Enter email"
                                         required
                                     />
                                 </div>

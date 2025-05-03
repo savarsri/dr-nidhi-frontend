@@ -32,8 +32,13 @@ export const setupInterceptors = (store) => {
     (response) => response,
     (error) => {
       const originalRequest = error.config;
-
+      console.log(error.response)
       // Handle 460 - Device not registered
+      if (error.response && error.response.status === 461) {
+        window.location.href = '/verify-email';
+        return Promise.reject(error);
+      }
+
       if (error.response && error.response.status === 460) {
         window.location.href = '/device-register';
         return Promise.reject(error);
