@@ -162,7 +162,7 @@ export const PatientEntry = () => {
       formPayload.append("majorsymptoms", formData.majorsymptoms);
       formPayload.append("medicalHistory", formData.medicalHistory || "");
       formPayload.append("medication_type", formData.medication_type || "");
-      formPayload.append("medication_type", formData.notes || "");
+      formPayload.append("notes", formData.notes || "");
 
       // Append file attachments
       fileInputs.forEach((fileData) => {
