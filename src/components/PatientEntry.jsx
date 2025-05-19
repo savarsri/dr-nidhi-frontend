@@ -388,9 +388,9 @@ export const PatientEntry = () => {
                   border: '1px solid #854141',
                   background: '#FFFFFF'
                 }}
-                value={formData.medicalHistory}
+                value={formData.notes}
                 onChange={(e) =>
-                  setFormData({ ...formData, medicalHistory: e.target.value })
+                  setFormData({ ...formData, notes: e.target.value })
                 }
               />
             </div>
