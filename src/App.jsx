@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { SplashScreen } from "./components/SplashScreen";
-import { LoginPage } from "./components/LoginPage";
-import { Dashboard } from "./components/Dashboard";
-import { PatientEntry } from "./components/PatientEntry";
+import { LoginPage } from "./components/LoginNew";
+import { Dashboard } from "./components/DashboardNew";
+import { PatientEntry } from "./components/PatientEntryNew";
 import { PatientList } from "./components/PatientList";
 import { Register } from "./components/Register";
-import StatusPage from "./components/StatusPage";
+import StatusPage from "./components/StatusPageNew";
 import PatientHistory from "./components/PatientHistory";
 import DeviceRegister from "./components/DeviceRegister"
 import ProtectedRoute from "./components/ProtectedRoute";

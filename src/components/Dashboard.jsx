@@ -3,7 +3,7 @@ import { Users, UserPlus, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import api from "../api.js";
-import NavBar from "./NavBar.jsx";
+import NavBar from "./NavBarNew.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTotalPatients } from "../redux/patientSlice.js";
 import Loader1 from "./Loader1.jsx";

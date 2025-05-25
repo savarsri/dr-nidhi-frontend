@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // <- useParams instead of useSearchParams
 import api from "../api";
 import { motion } from "framer-motion";
-import NavBar from "./NavBar.jsx";
+import NavBar from "./NavBarNew.jsx";
 
 const EmailVerification = () => {
     const { uidb64, token } = useParams(); // <-- capture from path

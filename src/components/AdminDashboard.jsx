@@ -3,7 +3,7 @@ import Chart from "react-apexcharts";
 import Select from "react-select";
 import { useEffect, useState } from "react";
 import api from "../api";
-import NavBar from "./NavBar.jsx";
+import NavBar from "./NavBarNew.jsx";
 import Loader1 from "./Loader1.jsx";
 
 const AdminDashboard = () => {

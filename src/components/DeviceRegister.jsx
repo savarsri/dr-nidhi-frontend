@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import NavBar from "./NavBar.jsx";
+import NavBar from "./NavBarNew.jsx";
 
 const DeviceRegister = () => {
     return (

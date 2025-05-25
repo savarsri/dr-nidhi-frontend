@@ -63,9 +63,14 @@ export const SplashScreen = ({ onComplete }) => {
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-primary to-deeper flex items-center justify-center">
+    <div className="fixed inset-0 bg-gradient-to-br from-primary to-text flex items-center justify-center">
       <div className="animate-bounce text-white flex flex-col items-center">
         <PlusSquare className="w-16 h-16 mb-4" />
+        {/* <img
+          src="https://i.postimg.cc/tTqFRJZY/Cancer-Logo.png"
+          alt="Logo"
+          className="w-240 h-20 mx-auto mb-4"
+        /> */}
         <h1 className="text-3xl font-bold">Dr. Nidhi</h1>
       </div>
     </div>

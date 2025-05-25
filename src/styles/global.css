@@ -1,0 +1,11 @@
+
+@font-face {
+    font-family: 'gillsansmt';
+    src: url('../assets/fonts/gillsansmt.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: 'gillsansmt', sans-serif;
+}
