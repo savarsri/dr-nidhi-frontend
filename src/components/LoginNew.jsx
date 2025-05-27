@@ -156,10 +156,10 @@ export const LoginPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-white flex flex-col">
-            <div className="flex flex-col md:flex-row">
+        <div className="min-h-screen bg-white flex flex-col justify-between">
+            <div className="flex flex-col md:flex-row flex-1">
                 <div className="md:w-1/2 w-full flex flex-col justify-center px-8 py-2 relative z-10 bg-white">
-                    <div className="">
+                    <div className="mt-8">
                         <img
                             src={logo}
                             alt="Logo"
