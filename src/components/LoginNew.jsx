@@ -9,6 +9,7 @@ import api from "../api";
 import Loader1 from "./Loader1";
 import logo from "../assets/logo-nobg.png"
 import doctorImg from "../assets/login-doctor.jpg"
+import doctorImgNew from "../assets/ND_BG.png"
 
 export const LoginPage = () => {
 
@@ -391,12 +392,12 @@ export const LoginPage = () => {
                 </div>
                 <div className="hidden md:block relative w-1/2 h-auto overflow-hidden">
                     <img
-                        src={doctorImg}
+                        src={doctorImgNew}
                         alt="Doctor"
                         className="w-full h-full object-cover"
                     />
                     {/* Gradient Overlay from right to left */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-white via-white/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-white via-white/0 to-transparent" />
                 </div>
             </div>
             {/* Footer */}
