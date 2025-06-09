@@ -343,7 +343,7 @@ export const LoginPage = () => {
                                                 id="username"
                                                 value={username}
                                                 onChange={(e) => setUsername(e.target.value)}
-                                                className="block w-full px-4 py-3 rounded-lg border border-primary text-text focus:ring-primary focus:border-primary bg-white"
+                                                        className="block w-full px-4 py-3 rounded-lg border border-primary text-text focus:ring-primary focus:border-primary bg-white font-sans"
                                                 placeholder="Enter username"
                                                 required
                                             />
@@ -396,7 +396,7 @@ export const LoginPage = () => {
                         className="w-full h-full object-cover"
                     />
                     {/* Gradient Overlay from right to left */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-white via-white/70 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-white via-white/30 to-transparent" />
                 </div>
             </div>
             {/* Footer */}
