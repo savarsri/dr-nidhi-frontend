@@ -222,12 +222,12 @@ const StatusPage = () => {
       <NavBar />
       <ToastContainer />
 
-      <div className="flex bg-white px-4">
+      <div className="flex bg-white px-4 h-screen">
         <div
           className="flex-1 overflow-y-hidden overflow-x-hidden"
-          style={{ maxHeight: leftMiddleMaxHeight }}
+          // style={{ maxHeight: leftMiddleMaxHeight }}
         >
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 h-screen">
             {/* Left Section */}
             <div className="w-1/2 bg-white rounded-lg shadow-lg border border-gray-200 p-4 flex-shrink-0">
               {/* Patient Header */}
