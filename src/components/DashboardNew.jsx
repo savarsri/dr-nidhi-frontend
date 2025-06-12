@@ -92,7 +92,8 @@ export const Dashboard = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-white flex flex-col">
-      <NavBar onRefresh={fetchPatients} />
+      {/* <NavBar onRefresh={fetchPatients} /> */}
+      <NavBar />
 
       <div className="flex flex-row items-start justify-between">
         {/* Left: Patients Table (75%) */}
@@ -112,6 +113,12 @@ export const Dashboard = () => {
               onClick={() => fetchPatients()}
             >
               <Search className="w-5 h-5" />
+            </button>
+            <button
+              className="flex items-center px-4 py-2 rounded-md shadow-sm bg-primary text-white hover:bg-primary-light transition-colors duration-200"
+              onClick={() => fetchPatients()}
+            >
+              Refresh
             </button>
             <select
               value={filter}

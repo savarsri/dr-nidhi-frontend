@@ -200,25 +200,25 @@ const StatusPage = () => {
             {/* Patient Basic Info */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-1 gap-x-3 mb-4 text-sm">
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-gray-600">GENDER:</span>
+                <span className="font-semibold text-gray-700">GENDER:</span>
                 <span className="text-accent capitalize">
                   {data.patient_data?.gender || "—"}
                 </span>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-gray-600">PH. NO.:</span>
+                <span className="font-semibold text-gray-700">PH. NO.:</span>
                 <span className="text-accent">
                   {data.patient_data?.patient_mobile_number || "—"}
                 </span>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-gray-600">AGE:</span>
+                <span className="font-semibold text-gray-700">AGE:</span>
                 <span className="text-accent">
                   {data.patient_data?.age ?? "—"}
                 </span>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-gray-600">HEART RATE:</span>
+                <span className="font-semibold text-gray-700">HEART RATE:</span>
                 <span className="text-accent">
                   {data.sensor_data?.heart_rate
                     ? `${data.sensor_data.heart_rate} BPM`
@@ -226,41 +226,118 @@ const StatusPage = () => {
                 </span>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-gray-600">O₂ LEVELS:</span>
+                <span className="font-semibold text-gray-700">O₂ LEVELS:</span>
                 <span className="text-accent">
                   {data.sensor_data?.spo2
                     ? `${data.sensor_data.spo2} %`
                     : "—"}
                 </span>
               </div>
-              <div className="col-span-1 sm:col-span-2">
-                <span className="font-medium text-gray-600">SYMPTOMS:</span>{" "}
-                <span className="block truncate max-w-full" title={data.model_output?.symptoms}>
-                  {data.model_output?.symptoms || "-"}
-                </span>
+              {/* <div className="col-span-1 sm:col-span-2"> */}
+              {/* HISTORY */}
+              <div className="flex items-center space-x-1">
+                <span className="font-semibold text-gray-700">HISTORY:</span>
+                <div className="relative group max-w-xs">
+                  {/* truncated summary */}
+                  <span className="block truncate text-accent">
+                    {data.model_output?.history || "-"}
+                  </span>
+
+                  {/* custom tooltip */}
+                  <div
+                    className="
+                      absolute 
+                      left-0 
+                      bottom-full 
+                      mb-2 
+                      w-max 
+                      max-w-sm 
+                      p-2 
+                      bg-gray-800 
+                      text-white 
+                      text-sm 
+                      rounded-lg 
+                      shadow-lg 
+                      opacity-0 
+                      pointer-events-none 
+                      transition-opacity 
+                      group-hover:opacity-100
+                    "
+                  >
+                    {data.model_output?.history}
+                  </div>
+                </div>
               </div>
-              <div className="col-span-1 sm:col-span-2">
-                <span className="font-medium text-gray-600">HISTORY:</span>{" "}
-                <span className="block truncate max-w-full" title={data.model_output?.history}>
-                  {data.model_output?.history || "-"}
-                </span>
+
+              {/* SYMPTOMS */}
+              <div className="flex items-center space-x-1 mt-2">
+                <span className="font-semibold text-gray-700">SYMPTOMS:</span>
+                <div className="relative group max-w-xs">
+                  <span className="block truncate text-accent">
+                    {data.model_output?.symptoms || "-"}
+                  </span>
+
+                  <div
+                    className="
+                      absolute 
+                      left-0 
+                      bottom-full 
+                      mb-2 
+                      w-max 
+                      max-w-sm 
+                      p-2 
+                      bg-gray-800 
+                      text-white 
+                      text-sm 
+                      rounded-lg 
+                      shadow-lg 
+                      opacity-0 
+                      pointer-events-none 
+                      transition-opacity 
+                      group-hover:opacity-100
+                    "
+                  >
+                    {data.model_output?.symptoms}
+                  </div>
+                </div>
               </div>
+
             </div>
             {/* Tab Buttons & Reload */}
-            <div className="flex flex-wrap gap-1 mb-3">
+            <div className="flex flex-wrap gap-2 mb-3">
               {accordions.map(acc => (
-                <div key={acc.key} className="flex items-center">
+                <div
+                  key={acc.key}
+                  className="
+        flex 
+        items-center 
+        divide-x divide-gray-300 
+        bg-gray-100 
+        rounded-full 
+        overflow-hidden
+      ">
+
+                  {/* Tab button */}
                   <button
-                    className={`px-2 py-1 rounded-full text-xs font-medium transition ${selectedTab === acc.key
-                      ? "bg-text text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                      }`}
+                    className={`
+          px-3 py-1 text-sm font-medium transition 
+          ${selectedTab === acc.key
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-700 hover:bg-gray-200'
+                      }
+          first:pl-4 last:pr-4
+        `}
                     onClick={() => handleTabClick(acc.key)}
                   >
                     {acc.title}
                   </button>
+
+                  {/* Reload button */}
                   <button
-                    className="ml-1 text-sm"
+                    className="
+          px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 
+          disabled:opacity-50
+        "
                     disabled={updating[acc.key]}
                     onClick={() => updatePromptOutput(acc.key)}
                     title="Reload"
@@ -270,6 +347,7 @@ const StatusPage = () => {
                 </div>
               ))}
             </div>
+
             {/* Tab Content Box */}
             <div className="flex-1 overflow-auto border border-gray-300 rounded p-3 prose prose-sm leading-normal text-sm">
               {(() => {
@@ -291,7 +369,9 @@ const StatusPage = () => {
                   );
                 }
                 return current.data ? (
-                  <div dangerouslySetInnerHTML={{ __html: current.data }} />
+                  <div className="text-lg text-gray-700">
+                    <div dangerouslySetInnerHTML={{ __html: current.data }} />
+                  </div>
                 ) : (
                   <p className="text-gray-500 text-center">No content.</p>
                 );
@@ -303,8 +383,8 @@ const StatusPage = () => {
           <div className="w-full md:w-1/2 bg-white rounded-lg shadow-lg border border-gray-200 p-4 overflow-auto">
             {/* Metrics Table */}
             <div className="mb-4">
-              <h4 className="text-md font-semibold text-gray-700 mb-2">Metric</h4>
-              <table className="w-full text-left border-collapse text-sm">
+              <h4 className="text-lg font-semibold text-gray-700 mb-2">Metric</h4>
+              <table className="w-full text-left border-collapse text-md">
                 <thead>
                   <tr>
                     <th className="p-1 border-b border-gray-300 text-gray-600">Metric</th>
@@ -336,7 +416,7 @@ const StatusPage = () => {
             </div>
 
             {/* Clinical Alerts */}
-            {tableHtml !== null ? (<div>
+            {tableHtml !== null ? (<div className="text-lg text-gray-700">
               <div dangerouslySetInnerHTML={{ __html: tableHtml }} />
             </div>) : (
               <p className="text-gray-500 text-center">No content.</p>
@@ -359,7 +439,7 @@ const StatusPage = () => {
             {ratings.map(({ label, emoji }) => (
               <button
                 key={label}
-                className={`py-3 px-6 rounded-full text-sm md:text-md font-semibold transition-all duration-200 shadow-sm ${selectedRating === label
+                className={`py-3 px-6 rounded-full text-md md:text-md transition-all duration-200 shadow-sm ${selectedRating === label
                   ? "bg-text text-white border-2 border-white ring-2 ring-text-dark shadow-md"
                   : "bg-text-light text-white border border-gray-400 hover:bg-text hover:text-white"
                   }`}

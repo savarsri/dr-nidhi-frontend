@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Cross, CrossIcon, FolderClosed, Save, SidebarClose, X } from 'lucide-react';
 import { replace, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api';
@@ -16,24 +16,48 @@ export const PatientEntry = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
   // New state to track if patient data has been fetched from the API
   const [isFetched, setIsFetched] = useState(false);
   const [showAttachments, setShowAttachments] = useState(true);
 
   const [fileInputs, setFileInputs] = useState([
-    { category: "", file: null }
+    { category: '', file: null }
   ]);
 
+  // Toggle visibility without clearing fileInputs
+  const handleToggle = () => {
+    setShowAttachments(prev => !prev);
+  };
+
+  // Remove a specific file row, even if it's the only one
+  const removeFileRow = (index) => {
+    if (index === 0) {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      setFileInputs([
+        { category: '', file: null }
+      ])
+      return
+    }
+    setFileInputs(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleFileChange = (index, file) => {
-    const newInputs = [...fileInputs];
-    newInputs[index].file = file;
-    setFileInputs(newInputs);
+    setFileInputs(prev =>
+      prev.map((input, i) =>
+        i === index ? { ...input, file } : input
+      )
+    );
   };
 
   const handleCategoryChange = (index, category) => {
-    const newInputs = [...fileInputs];
-    newInputs[index].category = category;
-    setFileInputs(newInputs);
+    setFileInputs(prev =>
+      prev.map((input, i) =>
+        i === index ? { ...input, category } : input
+      )
+    );
   };
 
   const addFileRow = () => {
@@ -41,11 +65,11 @@ export const PatientEntry = () => {
 
     // Ensure last input is not empty
     if (!lastInput.file || !lastInput.category) {
-      alert("Please select a category and upload a file before adding another.");
+      alert('Please select a category and upload a file before adding another.');
       return;
     }
 
-    setFileInputs([...fileInputs, { category: "", file: null }]);
+    setFileInputs(prev => [...prev, { category: '', file: null }]);
   };
 
   const [formData, setFormData] = useState(() => ({
@@ -87,7 +111,7 @@ export const PatientEntry = () => {
       const response = await api.get(`/output/${formData.id}`);
       if (response.status === 200) {
         console.log("helo");
-        
+
         navigate('/', replace)
       }
     } catch (error) {
@@ -384,58 +408,62 @@ export const PatientEntry = () => {
                 <label className="block text-md font-medium text-primary font-semibold">Attachments</label>
                 <button
                   type="button"
-                  onClick={() => setShowAttachments(!showAttachments)}
+                  onClick={handleToggle}
                   className="text-sm hover:underline flex items-center space-x-1"
                 >
                   <span>{showAttachments ? '▲' : '▼'}</span>
                 </button>
               </div>
 
-              {showAttachments &&
-                fileInputs.map((input, index) => (
-                  <div key={index} className="flex justify-between items-center mt-2 space-x-2">
-                    {/* Category Selection */}
-                    <div>
-                      <select
-                        className="border p-2 rounded-md"
-                        value={input.category}
-                        onChange={(e) => handleCategoryChange(index, e.target.value)}
-                      >
-                        <option value="">Select Category</option>
-                        {FILE_CATEGORIES.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-
-                      {/* File Input */}
-                      <input
-                        type="file"
-                        className="border p-2 rounded-md mt-2"
-                        onChange={(e) => handleFileChange(index, e.target.files[0])}
-                      />
-                    </div>
-
-                    {/* Add More Button */}
+              {showAttachments && fileInputs.map((input, index) => (
+                <div key={index} className="flex justify-between items-center mt-2 space-x-2">
+                  <div className="flex flex-col">
+                    <select
+                      className="border p-2 rounded-md"
+                      value={input.category}
+                      onChange={e => handleCategoryChange(index, e.target.value)}
+                    >
+                      <option value="">Select Category</option>
+                      {FILE_CATEGORIES.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                    <input
+                      type="file"
+                      className="border p-2 rounded-md mt-2"
+                      ref={fileInputRef}
+                      onChange={e => handleFileChange(index, e.target.files[0])}
+                    />
+                  </div>
+                  <div className="flex items-start space-x-1">
                     {index === fileInputs.length - 1 && (
                       <button
                         type="button"
-                        className="p-2 px-2 bg-text-dark hover:bg-text text-white rounded-md"
                         onClick={addFileRow}
+                        className="p-2 bg-text-dark hover:bg-text text-white rounded-md"
                       >
                         +
                       </button>
                     )}
+                    <button
+                      type="button"
+                      onClick={() => removeFileRow(index)}
+                      className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-md"
+                      aria-label="Remove file"
+                    >
+                      ✖
+                    </button>
                   </div>
-                ))}
+                </div>
+              ))}
             </div>
+
 
             {/* Submit Button */}
             <div className="flex justify-end gap-2">
               <button
                 className="flex items-center px-4 py-2 rounded-md shadow-sm border bg-accent-light hover:bg-accent text-white transition-all duration-300"
-                onClick={()=>navigate("/")}
+                onClick={() => navigate("/")}
               >
                 <X className="w-5 h-5 mr-2" />
                 Close
