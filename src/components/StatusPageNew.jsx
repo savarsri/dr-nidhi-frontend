@@ -91,14 +91,21 @@ const StatusPage = () => {
     fetchData();
   }, [id]);
 
-  const updatePromptOutput = async (promptId) => {
+  const updatePromptOutput = async (promptId, reload) => {
     if (globalUpdating || updating[promptId]) return;
+    // Check Redis prompt status before allowing refresh
     setGlobalUpdating(true);
     setUpdating(prev => ({ ...prev, [promptId]: true }));
     try {
+      const status = await checkPromptStatus(promptId);
+      if (["pending", "processing"].includes(status)) {
+        toast.info("This prompt is still being generated. Please try again in a moment.");
+        return;
+      }
       const response = await api.put(`/generate`, {
         prompt_id: promptId,
         output_id: id,
+        reload: reload
       });
       if (response.status === 200) {
         const updatedText = response.data.updatedText || "";
@@ -109,6 +116,8 @@ const StatusPage = () => {
               : acc
           )
         );
+      } else if (response.status === 202) {
+        toast.info("This prompt is still being generated. Please try again in a moment.");
       }
     } catch (err) {
       console.error(err);
@@ -118,14 +127,30 @@ const StatusPage = () => {
       setUpdating(prev => ({ ...prev, [promptId]: false }));
     }
   };
+  
 
   const handleTabClick = (key) => {
     setSelectedTab(key);
     const acc = accordions.find(a => a.key === key);
     if (acc && !acc.data && !updating[key]) {
-      updatePromptOutput(key);
+      updatePromptOutput(key, false);
     }
   };
+
+  const checkPromptStatus = async (promptId) => {
+    try {
+      const response = await api.get(`/prompt-status`, {
+        params: {
+          output_id: id,
+          prompt_id: promptId,
+        },
+      });
+      return response.data.status;
+    } catch {
+      return "error";
+    }
+  };
+  
 
   const handleSubmitRemark = async () => {
     if (!selectedRating) {
@@ -339,7 +364,7 @@ const StatusPage = () => {
           disabled:opacity-50
         "
                     disabled={updating[acc.key]}
-                    onClick={() => updatePromptOutput(acc.key)}
+                    onClick={() => updatePromptOutput(acc.key, true)}
                     title="Reload"
                   >
                     🔄
