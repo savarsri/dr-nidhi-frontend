@@ -158,7 +158,21 @@ export const Dashboard = () => {
                         onClick={() => window.location.href = patientLink}
                       >
                         <td className="px-6 py-3 text-white">{patient.patient_name || "New Patient"}</td>
-                        <td className="px-6 py-3 text-sm text-white">{patient.patient_age}</td>
+                        {/* <td className="px-6 py-3 text-sm text-white">{patient.patient_age}</td> */}
+                        <td className="px-6 py-3 text-sm text-white">
+                          {patient.patient_dob
+                            ? (() => {
+                              const dob = new Date(patient.patient_dob);
+                              const today = new Date();
+                              let age = today.getFullYear() - dob.getFullYear();
+                              const m = today.getMonth() - dob.getMonth();
+                              if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                                age--;
+                              }
+                              return age;
+                            })()
+                            : patient.patient_age}
+                        </td>
                         <td className="px-6 py-3 text-sm text-white">{patient.patient_gender}</td>
                         <td className="px-6 py-3 text-sm text-white">{patient.patient_mobile_number}</td>
                         <td className="px-6 py-3 text-sm text-white">{patient.date}</td>

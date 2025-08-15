@@ -44,17 +44,17 @@ const NavBar = ({ onRefresh }) => {
 
     return (
         <nav className="bg-primary-dark shadow-md transition-all duration-500 w-full">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16 relative">
                     <div className="flex items-center">
-                        {showBackButton && (
+                        {/* {showBackButton && (
                             <button
                                 onClick={() => navigate(-1)}
                                 className="mr-4 text-highlight hover:text-white transition duration-300"
                             >
                                 <ArrowLeft className="w-8 h-8" />
                             </button>
-                        )}
+                        )} */}
                         <div className="flex items-center cursor-pointer" onClick={handleNavigation}>
                             {/* <Layout className="w-6 h-6 text-primary" />
                             <span className="ml-2 text-lg sm:text-xl font-semibold text-text">
@@ -63,7 +63,7 @@ const NavBar = ({ onRefresh }) => {
                             <img
                                 src={logo}
                                 alt="Logo"
-                                className="w-30 h-10 mx-auto object-contain filter invert brightness-0"
+                                className="w-25 h-10 mx-auto object-contain filter invert brightness-0"
                             />
                         </div>
                     </div>

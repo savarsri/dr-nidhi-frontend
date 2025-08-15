@@ -23,16 +23,16 @@ const ratings = [
 ];
 
 const accordionTitles = [
-  "Initial Diagnosis",
-  "Primary Diagnosis",
-  "Organ Impact",
-  "Executive Summary",
-  "Clinical Analysis",
-  "Urgent Alerts",
-  "Recommended Actions",
-  "Treatment Plan & Recommendations",
-  "Prognostic Insights",
-  "Attachments",
+  { id: 3, title: "Organ Impact" },
+  { id: 4, title: "Executive Summary" },
+  { id: 1, title: "Initial Diagnosis" },
+  { id: 2, title: "Primary Diagnosis" },
+  { id: 5, title: "Clinical Analysis" },
+  { id: 6, title: "Urgent Alerts" },
+  { id: 7, title: "Recommended Actions" },
+  { id: 8, title: "Treatment Plan & Recommendations" },
+  { id: 9, title: "Prognostic Insights" },
+  { id: 10, title: "Attachments" }
 ];
 
 const StatusPage = () => {
@@ -67,13 +67,13 @@ const StatusPage = () => {
           setSelectedRating(respData.model_output?.doctor_remark || "");
 
           const modelOutput = respData.model_output || {};
-          const init = accordionTitles.map((title, idx) => {
-            const key = idx + 1;
+          const init = accordionTitles.map((acc) => {
+            const key = acc.id;
             const field = `output_text_${key}`;
             const raw = modelOutput[field];
             return {
               key,
-              title,
+              title: acc.title,
               data: raw ? mdParser.render(String(raw)) : null,
             };
           });
@@ -127,7 +127,7 @@ const StatusPage = () => {
       setUpdating(prev => ({ ...prev, [promptId]: false }));
     }
   };
-  
+
 
   const handleTabClick = (key) => {
     setSelectedTab(key);
@@ -150,7 +150,7 @@ const StatusPage = () => {
       return "error";
     }
   };
-  
+
 
   const handleSubmitRemark = async () => {
     if (!selectedRating) {

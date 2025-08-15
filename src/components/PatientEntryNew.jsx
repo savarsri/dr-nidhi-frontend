@@ -18,7 +18,7 @@ export const PatientEntry = () => {
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
   // New state to track if patient data has been fetched from the API
-  const [isFetched, setIsFetched] = useState(false);
+  const [isFetched, setIsFetched] = useState({});
   const [showAttachments, setShowAttachments] = useState(true);
 
   const [fileInputs, setFileInputs] = useState([
@@ -75,9 +75,11 @@ export const PatientEntry = () => {
   const [formData, setFormData] = useState(() => ({
     id: searchParams.get('id') || 0,
     name: '',
-    age: '',
+    // age: '',
+    dob: '',
     gender: '',
     phone: searchParams.get('number') || '',
+    abha_number: '',
     majorsymptoms: '',
     medicalHistory: '',
     notes: '',
@@ -89,14 +91,24 @@ export const PatientEntry = () => {
       const response = await api.get(`/patient/${formData.phone}`);
       if (response.status === 200) {
         const data = response.data;
+
+        // Build fetched map for only existing values
+        const fetchedMap = {
+          name: !!data.name,
+          dob: !!data.dob,
+          gender: !!data.gender,
+          abha_number: !!data.abha_number
+        };
+
         setFormData((prev) => ({
           ...prev,
           name: data.name || '',
-          age: data.age || '',
-          gender: data.gender || ''
+          dob: data.dob || '',
+          gender: data.gender || '',
+          abha_number: data.abha_number || ''
         }));
-        // Mark that patient data has been fetched so fetched fields can be disabled
-        setIsFetched(true);
+
+        setIsFetched(fetchedMap); // update fetched status per field
       }
     } catch (error) {
       console.log(error);
@@ -162,7 +174,8 @@ export const PatientEntry = () => {
     if (
       !formData.id.trim() ||
       !formData.name.trim() ||
-      !formData.age.toString().trim() || // Ensure age is treated as string
+      // !formData.age.toString().trim() || // Ensure age is treated as string
+      !formData.dob.toString().trim() || // Ensure age is treated as string
       !formData.gender.trim() ||
       !formData.phone.trim()
     ) {
@@ -180,9 +193,11 @@ export const PatientEntry = () => {
       // Append text fields
       formPayload.append("id", formData.id);
       formPayload.append("name", formData.name);
-      formPayload.append("age", formData.age);
+      // formPayload.append("age", formData.age);
+      formPayload.append("dob", formData.dob);
       formPayload.append("gender", formData.gender);
       formPayload.append("phone", formData.phone);
+      formPayload.append("abha_number", formData.abha_number);
       formPayload.append("majorsymptoms", formData.majorsymptoms);
       formPayload.append("medicalHistory", formData.medicalHistory || "");
       formPayload.append("medication_type", formData.medication_type || "");
@@ -252,7 +267,7 @@ export const PatientEntry = () => {
                     className="block w-full px-4 py-3 rounded-lg border border-primary-light focus:ring-primary focus:border-primary bg-white text-text"
                     placeholder="Enter full name"
                     required
-                    disabled={isFetched} // disable if patient data was fetched
+                    disabled={isFetched.name} // disable if patient data was fetched
                   />
                 </div>
               </div>
@@ -262,24 +277,24 @@ export const PatientEntry = () => {
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <label
-                  htmlFor="age"
+                  htmlFor="dob"
                   className="block text-sm font-medium text-primary"
                 >
-                  Age*
+                  Date of Birth*
                 </label>
                 <div className="mt-1">
                   <input
-                    type="number"
-                    id="age"
-                    value={formData.age}
+                    type="date"
+                    id="dob"
+                    value={formData.dob}
                     onChange={(e) =>
-                      setFormData({ ...formData, age: e.target.value })
+                      setFormData({ ...formData, dob: e.target.value })
                     }
                     className="block w-full px-4 py-3 rounded-lg border border-primary-light focus:ring-primary focus:border-primary bg-white text-text"
-                    placeholder="Enter age"
+                    placeholder="Select date of birth"
                     required
-                    disabled={isFetched} // disable if patient data was fetched
-                    max="150"
+                    disabled={isFetched.dob} // disable if patient data was fetched
+                    max={new Date().toISOString().split("T")[0]} // restrict future dates
                   />
                 </div>
               </div>
@@ -299,7 +314,7 @@ export const PatientEntry = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, gender: e.target.value })
                   }
-                  disabled={isFetched} // disable if patient data was fetched
+                  disabled={isFetched.gender} // disable if patient data was fetched
                 >
                   <option value="">Select gender</option>
                   <option value="male">Male</option>
@@ -328,28 +343,37 @@ export const PatientEntry = () => {
                 />
               </div>
 
-              {/* <div>
+              <div>
                 <label
-                  htmlFor="medication"
-                  className="block text-sm font-medium text-text"
+                  htmlFor="abha_number"
+                  className="block text-sm font-medium text-primary"
                 >
-                  Medication Type*
+                  ABHA Number*
                 </label>
-                <select
-                  required
-                  id="medication"
-                  className="block w-full px-4 py-3 mt-1 rounded-lg border border-accent focus:ring-primary focus:border-primary bg-white"
-                  value={formData.medication_type}
-                  onChange={(e) =>
-                    setFormData({ ...formData, medication_type: e.target.value })
-                  }
-                >
-                  <option value="">Select medication type</option>
-                  <option value="allopathy">Allopathy</option>
-                  <option value="homeopathy">Homeopathy</option>
-                  <option value="ayurveda">Ayurveda</option>
-                </select>
-              </div> */}
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    id="abha_number"
+                    value={formData.abha_number}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                      let formatted = '';
+                      if (raw.length > 0) formatted += raw.slice(0, 2);
+                      if (raw.length > 2) formatted += '-' + raw.slice(2, 6);
+                      if (raw.length > 6) formatted += '-' + raw.slice(6, 10);
+                      if (raw.length > 10) formatted += '-' + raw.slice(10, 14);
+                      setFormData({ ...formData, abha_number: formatted });
+                    }}
+                    className="block w-full px-4 py-3 rounded-lg border border-primary-light focus:ring-primary focus:border-primary bg-white text-text"
+                    placeholder="XX-XXXX-XXXX-XXXX"
+                    disabled={isFetched.abha_number}
+                    maxLength={17}
+                    pattern="\d{2}-\d{4}-\d{4}-\d{4}"
+                    title="Enter ABHA in format XX-XXXX-XXXX-XXXX"
+                  />
+                </div>
+              </div>
+
             </div>
 
             {/* Major Symptoms */}
